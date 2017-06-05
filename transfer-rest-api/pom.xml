@@ -93,6 +93,16 @@
       <artifactId>tomcat-jsp-api</artifactId>
       <version>${tomcat.version}</version>
     </dependency>
+
+    <!-- Jersey -->
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+    </dependency>
   </dependencies>
 
 </project>

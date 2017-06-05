@@ -10,7 +10,7 @@ import java.util.Optional;
 public class Main {
 
   public static void main(String[] args) throws Exception {
-    String contextPath = "/";
+    String contextPath = "/transfer/v1";
     String appBase = ".";
     Tomcat tomcat = new Tomcat();
     tomcat.setPort(getPort());
