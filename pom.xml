@@ -17,27 +17,42 @@
 
   <modules>
     <module>transfer-rest-api</module>
+    <module>transfer-rest-it</module>
   </modules>
+
+  <profiles>
+    <profile>
+      <id>local</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <properties>
+        <env>local</env>
+        <host>localhost</host>
+        <port>8080</port>
+      </properties>
+    </profile>
+  </profiles>
 
   <dependencyManagement>
     <dependencies>
-
       <dependency>
         <groupId>org.glassfish.jersey.containers</groupId>
         <artifactId>jersey-container-servlet</artifactId>
         <version>${jersey.version}</version>
       </dependency>
       <dependency>
-      <groupId>org.glassfish.jersey.bundles</groupId>
-      <artifactId>jaxrs-ri</artifactId>
-      <version>${jersey.version}</version>
-    </dependency>
+        <groupId>org.glassfish.jersey.bundles</groupId>
+        <artifactId>jaxrs-ri</artifactId>
+        <version>${jersey.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
         <version>20151123</version>
       </dependency>
 
+      <!-- Test -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>

@@ -32,3 +32,6 @@ log/
 target/
 out/
 classes/
+
+#Citrus Test Output
+test-output/
