@@ -17,7 +17,7 @@
 
   <modules>
     <module>transfer-rest-api</module>
-    <module>transfer-rest-it</module>
+    <module>transfer-rest-api-it</module>
   </modules>
 
   <profiles>
@@ -47,9 +47,20 @@
         <version>${jersey.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.glassfish.jersey.media</groupId>
+        <artifactId>jersey-media-json-jackson</artifactId>
+        <version>${jersey.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.json</groupId>
         <artifactId>json</artifactId>
         <version>20151123</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.projectlombok</groupId>
+        <artifactId>lombok</artifactId>
+        <version>1.16.16</version>
       </dependency>
 
       <!-- Test -->

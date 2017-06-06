@@ -15,7 +15,7 @@ public class HealthResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testGetKDKMissingHeader() throws Exception {
+  public void testGetHealth() throws Exception {
     http().client(HEALTH_ENDPOINT)
         .send()
         .get();
@@ -23,7 +23,7 @@ public class HealthResourceIT extends JUnit4CitrusTestDesigner {
     http().client(HEALTH_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
-        .messageType(MessageType.JSON)
+        .messageType(MessageType.PLAINTEXT)
         .payload("OK");
   }
 

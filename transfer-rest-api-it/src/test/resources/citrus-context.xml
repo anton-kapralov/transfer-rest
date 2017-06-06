@@ -20,4 +20,8 @@
                         request-url="${transfer.rest.api.url}/health"
                         content-type="text/plain"/>
 
+    <citrus-http:client id="users"
+                        request-url="${transfer.rest.api.url}/users"
+                        content-type="application/json"/>
+
 </beans>
