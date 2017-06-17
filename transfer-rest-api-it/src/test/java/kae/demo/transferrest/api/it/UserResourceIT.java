@@ -136,4 +136,16 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
         .response(HttpStatus.NOT_FOUND);
   }
 
+  @Test
+  @CitrusTest
+  public void testDeleteUnknownUser() throws Exception {
+    http().client(USERS_ENDPOINT)
+        .send()
+        .delete("/" + Integer.MAX_VALUE);
+
+    http().client(USERS_ENDPOINT)
+        .receive()
+        .response(HttpStatus.NOT_FOUND);
+  }
+
 }

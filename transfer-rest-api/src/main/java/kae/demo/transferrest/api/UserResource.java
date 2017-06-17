@@ -67,6 +67,9 @@ public class UserResource {
     executeWithTransaction(
         (em) -> {
           final User user = em.find(User.class, id);
+          if (user == null) {
+            throw new NotFoundException("User has not been found by id " + id);
+          }
           em.remove(user);
         });
     return Response.noContent().build();
