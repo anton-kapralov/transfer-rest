@@ -47,8 +47,13 @@ public class UserResource {
 
   @PUT
   @Path("/{id}")
-  public Response updateUser(@PathParam("id") long id, User user) {
-    getUser(id);
+  public Response updateUser(@PathParam("id") long id, User userUpdate) {
+    final User user = getUser(id);
+
+    final String name = userUpdate.getName();
+    if (name != null && !name.isEmpty()) {
+      user.setName(name);
+    }
 
     executeWithTransaction(
         (em) -> em.merge(user));
@@ -60,7 +65,10 @@ public class UserResource {
   @Path("/{id}")
   public Response deleteUser(@PathParam("id") long id) {
     executeWithTransaction(
-        (em) -> em.remove(id));
+        (em) -> {
+          final User user = em.find(User.class, id);
+          em.remove(user);
+        });
     return Response.noContent().build();
   }
 

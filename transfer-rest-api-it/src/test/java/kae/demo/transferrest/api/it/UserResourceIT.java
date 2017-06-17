@@ -87,17 +87,53 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testUpdateUser() throws Exception {
+    createUser("Laurence Wachowski");
+
+    final String newName = "Lana Wachowski";
     http().client(USERS_ENDPOINT)
         .send()
-        .put("/3")
+        .put("/${userId}")
         .payload(Json.createObjectBuilder()
-            .add("name", "Kurt Vonnegut")
+            .add("name", newName)
             .build()
             .toString());
 
     http().client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.NO_CONTENT);
+
+    http().client(USERS_ENDPOINT)
+        .send()
+        .get("/${userId}");
+
+    http().client(USERS_ENDPOINT)
+        .receive()
+        .response(HttpStatus.OK)
+        .messageType(MessageType.JSON)
+        .jsonPath("$.id", "${userId}")
+        .jsonPath("$.name", newName);
+  }
+
+  @Test
+  @CitrusTest
+  public void testDeleteUser() throws Exception {
+    createUser("Anton Kapralov");
+
+    http().client(USERS_ENDPOINT)
+        .send()
+        .delete("/${userId}");
+
+    http().client(USERS_ENDPOINT)
+        .receive()
+        .response(HttpStatus.NO_CONTENT);
+
+    http().client(USERS_ENDPOINT)
+        .send()
+        .get("/${userId}");
+
+    http().client(USERS_ENDPOINT)
+        .receive()
+        .response(HttpStatus.NOT_FOUND);
   }
 
 }
