@@ -1,13 +1,16 @@
 package kae.demo.transferrest.api;
 
-import kae.demo.transferrest.api.dto.User;
+import kae.demo.transferrest.api.data.User;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Collections;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
-import java.util.Random;
+
+import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturn;
+import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeWithTransaction;
 
 /**
  *
@@ -17,24 +20,47 @@ import java.util.Random;
 public class UserResource {
 
   @POST
-  public Response createUser(User user) {
-    return Response.noContent().header("Location", "/users/" + (new Random().nextInt())).build();
+  public Response createUser(@Context UriInfo uriInfo, User user) {
+    executeWithTransaction(
+        (em) -> em.persist(user));
+    return Response
+        .noContent()
+        .header("Location", uriInfo.getBaseUri() + "users/" + user.getId()).build();
   }
 
   @GET
   public List<User> getUsers() {
-    return Collections.singletonList(new User(1, "Lev Tolstoy"));
+    return executeAndReturn(
+        (em) -> em.createQuery("SELECT u FROM User u ORDER BY u.name", User.class).getResultList());
   }
 
   @GET
   @Path("/{id}")
   public User getUser(@PathParam("id") long id) {
-    return new User(id, "Fedor Dostoevsky");
+    final User user = executeAndReturn(
+        (em) -> em.find(User.class, id));
+    if (user == null) {
+      throw new NotFoundException("User has not been found by id " + id);
+    }
+    return user;
   }
 
   @PUT
   @Path("/{id}")
-  public Response updateUser(User user) {
+  public Response updateUser(@PathParam("id") long id, User user) {
+    getUser(id);
+
+    executeWithTransaction(
+        (em) -> em.merge(user));
+
+    return Response.noContent().build();
+  }
+
+  @DELETE
+  @Path("/{id}")
+  public Response deleteUser(@PathParam("id") long id) {
+    executeWithTransaction(
+        (em) -> em.remove(id));
     return Response.noContent().build();
   }
 

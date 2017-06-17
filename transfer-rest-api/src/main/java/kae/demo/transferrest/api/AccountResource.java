@@ -1,8 +1,9 @@
 package kae.demo.transferrest.api;
 
-import kae.demo.transferrest.api.dto.Account;
+import kae.demo.transferrest.api.data.Account;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Random;
  *
  */
 @Path("users/{userId}/accounts")
+@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class AccountResource {
 
   @POST

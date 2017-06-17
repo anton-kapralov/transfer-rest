@@ -1,4 +1,4 @@
-package kae.demo.transferrest.api.dto;
+package kae.demo.transferrest.api.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class User {
+public class Account {
 
   private long id;
-  private String name;
+
+  private long userId;
 
 }

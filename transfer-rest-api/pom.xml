@@ -22,6 +22,10 @@
         <directory>src/main/webapp</directory>
         <targetPath>META-INF/resources</targetPath>
       </resource>
+      <resource>
+        <directory>src/main/resources/META-INF</directory>
+        <targetPath>META-INF</targetPath>
+      </resource>
     </resources>
     <plugins>
       <plugin>
@@ -111,6 +115,16 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>eclipselink</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
     </dependency>
 
   </dependencies>

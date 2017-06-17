@@ -1,8 +1,9 @@
 package kae.demo.transferrest.api;
 
-import kae.demo.transferrest.api.dto.Transaction;
+import kae.demo.transferrest.api.data.Transaction;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Collections;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.Random;
  *
  */
 @Path("users/{userId}/accounts/{accountId}/transactions")
+@Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class TransactionResource {
 
   @POST

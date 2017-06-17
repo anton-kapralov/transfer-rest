@@ -1,4 +1,4 @@
-package kae.demo.transferrest.api.dto;
+package kae.demo.transferrest.api.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
