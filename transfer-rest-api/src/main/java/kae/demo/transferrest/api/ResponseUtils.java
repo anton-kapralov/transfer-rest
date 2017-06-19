@@ -2,6 +2,8 @@ package kae.demo.transferrest.api;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 /**
  *
@@ -10,6 +12,14 @@ public class ResponseUtils {
 
   static Response internalServerError(String message) {
     return build(Response.Status.INTERNAL_SERVER_ERROR, message);
+  }
+
+  static Response created(UriInfo uriInfo, long id) {
+    UriBuilder builder = uriInfo.getAbsolutePathBuilder();
+    builder.path(Long.toString(id));
+    return Response
+        .created(builder.build())
+        .build();
   }
 
   static Response build(Response.Status status, String message) {

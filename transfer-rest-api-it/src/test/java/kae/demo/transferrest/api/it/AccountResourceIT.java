@@ -6,32 +6,27 @@ import com.consol.citrus.message.MessageType;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
 
-import javax.json.Json;
+import static kae.demo.transferrest.api.it.ITHelper.*;
+import static org.hamcrest.Matchers.greaterThan;
 
 /**
  *
  */
 public class AccountResourceIT extends JUnit4CitrusTestDesigner {
 
-  private static final String USERS_ENDPOINT = "users";
-  private static final String USER_ID = "1";
-  private static final String ACCOUNTS_PATH = "/" + USER_ID + "/accounts";
-
   @Test
   @CitrusTest
   public void testCreateAccount() throws Exception {
-    http().client(USERS_ENDPOINT)
-        .send()
-        .post(ACCOUNTS_PATH);
-
-    http().client(USERS_ENDPOINT)
-        .receive()
-        .response(HttpStatus.NO_CONTENT);
+    createUser(this, "Philip Kotler");
+    createAccount(this);
   }
 
   @Test
   @CitrusTest
   public void testGetAccounts() throws Exception {
+    createUser(this, "Adam Smith");
+    createAccount(this);
+
     http().client(USERS_ENDPOINT)
         .send()
         .get(ACCOUNTS_PATH);
@@ -40,31 +35,36 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
-        .jsonPath("$.[0].id", 1)
-        .jsonPath("$.[0].userId", USER_ID);
+        .jsonPath("$.size()", greaterThan(0));
   }
 
   @Test
   @CitrusTest
   public void testGetAccount() throws Exception {
+    createUser(this, "John Maynard Keynes");
+    createAccount(this);
+
     http().client(USERS_ENDPOINT)
         .send()
-        .get(ACCOUNTS_PATH + "/2");
+        .get(ACCOUNTS_PATH + "/${accountId}");
 
     http().client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
-        .jsonPath("$.id", 2)
-        .jsonPath("$.userId", USER_ID);
+        .jsonPath("$.id", "${accountId}")
+        .jsonPath("$.userId", "${userId}");
   }
 
   @Test
   @CitrusTest
   public void testDeleteAccount() throws Exception {
+    createUser(this, "Karl Marx");
+    createAccount(this);
+
     http().client(USERS_ENDPOINT)
         .send()
-        .delete(ACCOUNTS_PATH + "/3");
+        .delete(ACCOUNTS_PATH + "/${accountId}");
 
     http().client(USERS_ENDPOINT)
         .receive()

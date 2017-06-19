@@ -9,6 +9,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
+import static kae.demo.transferrest.api.ResponseUtils.created;
 import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturn;
 import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeWithTransaction;
 
@@ -23,9 +24,7 @@ public class UserResource {
   public Response createUser(@Context UriInfo uriInfo, User user) {
     executeWithTransaction(
         (em) -> em.persist(user));
-    return Response
-        .noContent()
-        .header("Location", uriInfo.getBaseUri() + "users/" + user.getId()).build();
+    return created(uriInfo, user.getId());
   }
 
   @GET

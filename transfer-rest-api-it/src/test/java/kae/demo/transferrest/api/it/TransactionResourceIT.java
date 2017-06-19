@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 
 import javax.json.Json;
 
-import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 
 /**
