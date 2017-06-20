@@ -5,9 +5,9 @@
   <persistence-unit name="TransferPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
-    <class>kae.demo.transferrest.api.data.User</class>
-    <class>kae.demo.transferrest.api.data.Account</class>
-    <class>kae.demo.transferrest.api.data.Transaction</class>
+    <class>kae.demo.transferrest.api.data.UserEntity</class>
+    <class>kae.demo.transferrest.api.data.AccountEntity</class>
+    <class>kae.demo.transferrest.api.data.TransactionEntity</class>
 
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
