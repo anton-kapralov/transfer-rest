@@ -4,6 +4,7 @@ import kae.demo.transferrest.api.data.TransactionEntity;
 import kae.demo.transferrest.api.dto.Transaction;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -86,11 +87,24 @@ public class TransactionResource {
   @GET
   @Path("/{id}")
   public Transaction getTransaction(@PathParam("userId") long userId,
-                                          @PathParam("accountId") long accountId,
-                                          @PathParam("id") long id) {
-    final TransactionEntity transactionEntity = executeAndReturn(
-        (em) -> em.find(TransactionEntity.class, id));
+                                    @PathParam("accountId") long accountId,
+                                    @PathParam("id") long id) {
 
+    return toTransactionDTO(executeAndReturn(
+        (em) -> getTransactionEntity(em, userId, accountId, id)));
+  }
+
+  @DELETE
+  @Path("/{id}")
+  public Response deleteTransaction(@PathParam("userId") long userId,
+                                    @PathParam("accountId") long accountId,
+                                    @PathParam("id") long id) {
+    executeWithTransaction((em -> em.remove(getTransactionEntity(em, userId, accountId, id))));
+    return Response.noContent().build();
+  }
+
+  private TransactionEntity getTransactionEntity(EntityManager em, long userId, long accountId, long id) {
+    final TransactionEntity transactionEntity = em.find(TransactionEntity.class, id);
     if (transactionEntity != null) {
       final boolean transactionOfFromAccount =
           transactionEntity.getFromAccount().getId() == accountId &&
@@ -100,18 +114,11 @@ public class TransactionResource {
               transactionEntity.getToAccount().getUser().getId() == userId;
 
       if (transactionOfFromAccount || transactionOfToAccount) {
-        return toTransactionDTO(transactionEntity);
+        return transactionEntity;
       }
     }
     throw new NotFoundException("Transaction has not been found by id " + id +
         " and accountId " + accountId + " and userId " + userId);
-
-  }
-
-  @DELETE
-  @Path("/{id}")
-  public Response deleteTransaction(TransactionEntity transactionEntity) {
-    return Response.noContent().build();
   }
 
   private Transaction toTransactionDTO(TransactionEntity transactionEntity) {
