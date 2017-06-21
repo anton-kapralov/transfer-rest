@@ -24,7 +24,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testGetTransactions() throws Exception {
-    createTransaction(this, "Mark Zuckerber", "Pavel Durov", 100L, "Thanks for beer!");
+    createTransaction(this, "Mark Zuckerberg", "Pavel Durov", 100L, "Thanks for beer!");
 
     http().client(USERS_ENDPOINT)
         .send()
