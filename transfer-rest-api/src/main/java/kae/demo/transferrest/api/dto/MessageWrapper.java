@@ -1,4 +1,4 @@
-package kae.demo.transferrest.api;
+package kae.demo.transferrest.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-class MessageWrapper {
+public class MessageWrapper {
 
   private String message;
 

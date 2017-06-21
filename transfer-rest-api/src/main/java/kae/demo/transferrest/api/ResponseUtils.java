@@ -1,5 +1,7 @@
 package kae.demo.transferrest.api;
 
+import kae.demo.transferrest.api.dto.MessageWrapper;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
