@@ -46,7 +46,7 @@ public class AccountResource {
   @GET
   public List<Account> getAccounts(@PathParam("userId") long userId) {
     return executeAndReturn(
-        (em) -> {
+        (EntityManager em) -> {
           final CriteriaBuilder cb = em.getCriteriaBuilder();
           final CriteriaQuery<AccountEntity> cq = cb.createQuery(AccountEntity.class);
           final Root<AccountEntity> root = cq.from(AccountEntity.class);
@@ -59,17 +59,18 @@ public class AccountResource {
           final TypedQuery<AccountEntity> query = em.createQuery(cq);
           query.setParameter(userIdParameter, userId);
 
-          return query.getResultList();
-        })
-        .stream()
-        .map(this::toAccountDTO)
-        .collect(Collectors.toList());
+          return query.getResultList()
+              .stream()
+              .map(accountEntity -> toAccountDTO(em, accountEntity))
+              .collect(Collectors.toList());
+        });
   }
 
   @GET
   @Path("/{id}")
   public Account getAccount(@PathParam("userId") long userId, @PathParam("id") long id) {
-    return toAccountDTO(getAccountEntity(userId, id));
+    return executeAndReturn(
+        (em) -> toAccountDTO(em, getAccountEntity(em, id)));
   }
 
   @DELETE
@@ -106,8 +107,8 @@ public class AccountResource {
     return accountEntity;
   }
 
-  private Account toAccountDTO(AccountEntity accountEntity) {
-    return new Account(accountEntity.getId(), accountEntity.getUser().getId());
+  private Account toAccountDTO(EntityManager em, AccountEntity accountEntity) {
+    return new Account(accountEntity.getId(), accountEntity.getUser().getId(), accountEntity.getBalance(em));
   }
 
 }

@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  *
  */
@@ -17,5 +19,7 @@ public class Account {
   private long id;
 
   private long userId;
+
+  private BigDecimal balance;
 
 }
