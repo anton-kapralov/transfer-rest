@@ -60,6 +60,7 @@ POST http://localhost:8080/transfer/v1/rest/users/6/accounts
  [
      {
          "id": 1,
+         "dateTime": "2017-06-24T11:14:07.496+03:00",
          "fromAccountId": 6,
          "toAccountId": 5,
          "amount": 100,
@@ -71,6 +72,7 @@ POST http://localhost:8080/transfer/v1/rest/users/6/accounts
  [
       {
           "id": 1,
+          "dateTime": "2017-06-24T11:14:07.496+03:00",
           "fromAccountId": 6,
           "toAccountId": 5,
           "amount": 100,
