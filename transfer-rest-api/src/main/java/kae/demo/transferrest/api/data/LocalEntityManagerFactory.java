@@ -21,6 +21,7 @@ public class LocalEntityManagerFactory implements ServletContextListener {
   @Override
   public void contextInitialized(ServletContextEvent event) {
     emf = Persistence.createEntityManagerFactory("TransferPU");
+    loadBasicData();
   }
 
   @Override
@@ -67,4 +68,15 @@ public class LocalEntityManagerFactory implements ServletContextListener {
       }
     }
   }
+
+  private void loadBasicData() {
+    final UserEntity bank = new UserEntity(UserEntity.BANK_USER_ID, "Bank");
+    final AccountEntity bankAccount = new AccountEntity(AccountEntity.BANK_ACCOUNT_ID, bank);
+
+    executeWithTransaction(em -> {
+      em.persist(bank);
+      em.persist(bankAccount);
+    });
+  }
+
 }

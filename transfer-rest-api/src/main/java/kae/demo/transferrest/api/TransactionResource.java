@@ -1,5 +1,6 @@
 package kae.demo.transferrest.api;
 
+import kae.demo.transferrest.api.data.AccountEntity;
 import kae.demo.transferrest.api.data.TransactionEntity;
 import kae.demo.transferrest.api.dto.Transaction;
 
@@ -44,7 +45,13 @@ public class TransactionResource {
         transaction.getAmount(),
         transaction.getComment());
     executeWithTransaction(
-        (em) -> em.persist(transactionEntity));
+        (em) -> {
+          if (transactionEntity.getFromAccount().getId() != AccountEntity.BANK_ACCOUNT_ID &&
+              transactionEntity.getFromAccount().getBalance(em).compareTo(transactionEntity.getAmount()) < 0) {
+            throw new BadRequestException("Not enough funds");
+          }
+          em.persist(transactionEntity);
+        });
     return created(uriInfo, transactionEntity.getId());
   }
 

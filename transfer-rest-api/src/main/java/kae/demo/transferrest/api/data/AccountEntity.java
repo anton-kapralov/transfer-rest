@@ -18,6 +18,8 @@ import java.math.BigDecimal;
 @EqualsAndHashCode
 public class AccountEntity {
 
+  public static final long BANK_ACCOUNT_ID = 1;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
@@ -26,7 +28,10 @@ public class AccountEntity {
   private UserEntity user;
 
   public BigDecimal getBalance(EntityManager em) {
-    return TransactionEntity.getSumToAccount(em, id).subtract(TransactionEntity.getSumFromAccount(em, id));
+    final BigDecimal sumToAccount = TransactionEntity.getSumToAccount(em, id);
+    final BigDecimal sumFromAccount = TransactionEntity.getSumFromAccount(em, id);
+    return id != BANK_ACCOUNT_ID ? sumToAccount.subtract(sumFromAccount) :
+        sumFromAccount.subtract(sumToAccount);
   }
 
 }

@@ -20,6 +20,8 @@ import javax.persistence.Id;
 @EqualsAndHashCode
 public class UserEntity {
 
+  public static final long BANK_USER_ID = 1;
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
