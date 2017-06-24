@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 
 /**
  *
@@ -36,6 +37,8 @@ public class TransactionEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private long id;
+
+  private ZonedDateTime dateTime;
 
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   private AccountEntity fromAccount;

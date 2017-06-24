@@ -16,6 +16,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +41,7 @@ public class TransactionResource {
                                     Transaction transaction) {
     TransactionEntity transactionEntity = new TransactionEntity(
         0,
+        ZonedDateTime.now(),
         accountResource.getAccountEntity(userId, accountId),
         accountResource.getAccountEntity(transaction.getToAccountId()),
         transaction.getAmount(),
@@ -131,6 +133,7 @@ public class TransactionResource {
   private Transaction toTransactionDTO(TransactionEntity transactionEntity) {
     return new Transaction(
         transactionEntity.getId(),
+        transactionEntity.getDateTime(),
         transactionEntity.getFromAccount().getId(),
         transactionEntity.getToAccount().getId(),
         transactionEntity.getAmount(),

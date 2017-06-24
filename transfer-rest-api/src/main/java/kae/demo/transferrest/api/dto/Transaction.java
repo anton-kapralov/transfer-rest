@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 
 /**
  *
@@ -17,6 +18,8 @@ import java.math.BigDecimal;
 public class Transaction {
 
   private long id;
+
+  private ZonedDateTime dateTime;
 
   private long fromAccountId;
 
