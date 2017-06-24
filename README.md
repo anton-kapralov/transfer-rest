@@ -39,7 +39,15 @@ POST http://localhost:8080/transfer/v1/rest/users
 POST http://localhost:8080/transfer/v1/rest/users/6/accounts
  ```
  
- Here we go. We've got two users with accounts. Now Mark can thank Pavel for beer:
+ Here we go. We've got two users with accounts. 
+ 
+ Let's Mark refill his account (1 - it's and ID of the Bank user and his account):
+ ```
+ POST http://localhost:8080/transfer/v1/rest/users/1/accounts/1/transactions
+ {"toAccountId":"6","amount":1000,"comment":"Basic refill"}
+ ```
+ 
+ Now Mark can thank Pavel for beer:
  ```
  POST http://localhost:8080/transfer/v1/rest/users/6/accounts/6/transactions
  {"toAccountId":"5","amount":100,"comment":"Thanks for beer!"}
