@@ -41,7 +41,7 @@ POST http://localhost:8080/transfer/v1/rest/users/6/accounts
  
  Here we go. We've got two users with accounts. 
  
- Let's Mark refill his account (1 - it's and ID of the Bank user and his account):
+ Let Mark refill his account (1 - it's and ID of the Bank user and his account):
  ```
  POST http://localhost:8080/transfer/v1/rest/users/1/accounts/1/transactions
  {"toAccountId":"6","amount":1000,"comment":"Basic refill"}
