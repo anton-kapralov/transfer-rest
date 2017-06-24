@@ -53,7 +53,8 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
         .jsonPath("$.id", "${accountId}")
-        .jsonPath("$.userId", "${userId}");
+        .jsonPath("$.userId", "${userId}")
+        .jsonPath("$.balance", "0");
   }
 
   @Test

@@ -18,7 +18,19 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testCreateTransaction() throws Exception {
-    createTransaction(this, "Alisher Usmanov", "Dmitry Medvedev", 5000000000L, "This is not a bribe");
+    final long amount = 5000000000L;
+    createTransaction(this, "Alisher Usmanov", "Dmitry Medvedev", amount, "This is not a bribe");
+    http().client(USERS_ENDPOINT)
+        .send()
+        .get(ACCOUNTS_PATH + "/${accountId}");
+
+    http().client(USERS_ENDPOINT)
+        .receive()
+        .response(HttpStatus.OK)
+        .messageType(MessageType.JSON)
+        .jsonPath("$.id", "${accountId}")
+        .jsonPath("$.userId", "${userId}")
+        .jsonPath("$.balance", -amount);
   }
 
   @Test
@@ -54,7 +66,6 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
         .messageType(MessageType.JSON)
         .jsonPath("$.id", "${transactionId}")
         .jsonPath("$.fromAccountId", notNullValue())
-        .jsonPath("$.toAccountId", notNullValue())
         .jsonPath("$.toAccountId", notNullValue())
         .jsonPath("$.amount", amount)
         .jsonPath("$.comment", comment);
