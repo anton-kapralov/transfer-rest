@@ -28,6 +28,8 @@ public class AccountEntity {
   private UserEntity user;
 
   public BigDecimal getBalance(EntityManager em) {
+    em.createNativeQuery("LOCK TABLE TransactionEntity WRITE ").executeUpdate();
+
     final BigDecimal sumToAccount = TransactionEntity.getSumToAccount(em, id);
     final BigDecimal sumFromAccount = TransactionEntity.getSumFromAccount(em, id);
     return id != BANK_ACCOUNT_ID ? sumToAccount.subtract(sumFromAccount) :

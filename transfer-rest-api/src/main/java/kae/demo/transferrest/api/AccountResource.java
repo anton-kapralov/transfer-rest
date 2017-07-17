@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static kae.demo.transferrest.api.ResponseUtils.created;
-import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturn;
-import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeWithTransaction;
+import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.*;
 
 /**
  *
@@ -45,7 +44,7 @@ public class AccountResource {
 
   @GET
   public List<Account> getAccounts(@PathParam("userId") long userId) {
-    return executeAndReturn(
+    return executeAndReturnWithTransaction(
         (EntityManager em) -> {
           final CriteriaBuilder cb = em.getCriteriaBuilder();
           final CriteriaQuery<AccountEntity> cq = cb.createQuery(AccountEntity.class);
@@ -69,7 +68,7 @@ public class AccountResource {
   @GET
   @Path("/{id}")
   public Account getAccount(@PathParam("userId") long userId, @PathParam("id") long id) {
-    return executeAndReturn(
+    return executeAndReturnWithTransaction(
         (em) -> toAccountDTO(em, getAccountEntity(em, id)));
   }
 

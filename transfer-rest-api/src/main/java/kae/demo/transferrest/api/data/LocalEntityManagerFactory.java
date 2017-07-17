@@ -47,13 +47,7 @@ public class LocalEntityManagerFactory implements ServletContextListener {
       consumer.accept(em);
       transaction.commit();
     } finally {
-      if (em != null) {
-        final EntityTransaction transaction = em.getTransaction();
-        if (transaction.isActive()) {
-          transaction.rollback();
-        }
-        em.close();
-      }
+      closeWithTransaction(em);
     }
   }
 
@@ -66,6 +60,32 @@ public class LocalEntityManagerFactory implements ServletContextListener {
       if (em != null) {
         em.close();
       }
+    }
+  }
+
+  public static <T> T executeAndReturnWithTransaction(Function<EntityManager, T> function) {
+    EntityManager em = null;
+    final T result;
+    try {
+      em = createEntityManager();
+      final EntityTransaction transaction = em.getTransaction();
+      transaction.begin();
+      result = function.apply(em);
+      transaction.commit();
+    } finally {
+      closeWithTransaction(em);
+    }
+
+    return result;
+  }
+
+  private static void closeWithTransaction(EntityManager em) {
+    if (em != null) {
+      final EntityTransaction transaction = em.getTransaction();
+      if (transaction.isActive()) {
+        transaction.rollback();
+      }
+      em.close();
     }
   }
 
