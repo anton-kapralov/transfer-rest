@@ -46,10 +46,12 @@ public class TransactionResource {
         accountResource.getAccountEntity(transaction.getToAccountId()),
         transaction.getAmount(),
         transaction.getComment());
+
+    // TODO: comparing balance and persisting a new transaction should be atomic. Check the isolation level.
     executeWithTransaction(
         (em) -> {
-          if (transactionEntity.getFromAccount().getId() != AccountEntity.BANK_ACCOUNT_ID &&
-              transactionEntity.getFromAccount().getBalance(em).compareTo(transactionEntity.getAmount()) < 0) {
+          final AccountEntity fromAccount = transactionEntity.getFromAccount();
+          if (!fromAccount.isBankAccount() && !fromAccount.hasEnoughFunds(em, transactionEntity.getAmount())) {
             throw new BadRequestException("Not enough funds");
           }
           em.persist(transactionEntity);

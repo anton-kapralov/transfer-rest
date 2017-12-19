@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 /**
  *
@@ -17,20 +18,16 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@NamedQueries({
-    @NamedQuery(
-        name = TransactionEntity.QUERY_SUM_FROM_ACCOUNT,
-        query = "SELECT SUM(t.amount) FROM TransactionEntity t " +
-            "WHERE t.fromAccount.id=:accountId"),
-    @NamedQuery(
-        name = TransactionEntity.QUERY_SUM_TO_ACCOUNT,
-        query = "SELECT SUM(t.amount) FROM TransactionEntity t " +
-            "WHERE t.toAccount.id=:accountId")
+@NamedNativeQueries({
+    @NamedNativeQuery(
+        name = TransactionEntity.QUERY_ACCOUNT_BALANCE,
+        query = "SELECT amountTo, amountFrom FROM " +
+            "(SELECT SUM(t.amount) as amountTo FROM TransactionEntity t WHERE t.toAccount_id=?), " +
+            "(SELECT SUM(t.amount) as amountFrom FROM TransactionEntity t WHERE t.fromAccount_id=?)")
 })
 public class TransactionEntity {
 
-  public static final String QUERY_SUM_FROM_ACCOUNT = "TransactionEntity.querySumFromAccount";
-  public static final String QUERY_SUM_TO_ACCOUNT = "TransactionEntity.querySumToAccount";
+  public static final String QUERY_ACCOUNT_BALANCE = "TransactionEntity.queryAccountBalance";
 
   private static final String PARAMETER_ACCOUNT_ID = "accountId";
 
@@ -50,18 +47,21 @@ public class TransactionEntity {
 
   private String comment;
 
-  public static BigDecimal getSumFromAccount(EntityManager em, long accountId) {
-    return getSumByAccountId(em, QUERY_SUM_FROM_ACCOUNT, accountId);
+  public static Optional<AccountSummary> getSummaryByAccountId(EntityManager em, long accountId) {
+    final Query queryForSum = em.createNamedQuery(QUERY_ACCOUNT_BALANCE);
+    queryForSum.setParameter(1, accountId);
+    queryForSum.setParameter(2, accountId);
+    final Object[] result = (Object[]) queryForSum.getSingleResult();
+    if (result != null) {
+      final BigDecimal sumToAccount = ofNullable((BigDecimal) result[0]);
+      final BigDecimal sumFromAccount = ofNullable((BigDecimal) result[1]);
+      return Optional.of(new AccountSummary(sumToAccount, sumFromAccount));
+    } else {
+      return Optional.empty();
+    }
   }
 
-  public static BigDecimal getSumToAccount(EntityManager em, long accountId) {
-    return getSumByAccountId(em, QUERY_SUM_TO_ACCOUNT, accountId);
-  }
-
-  private static BigDecimal getSumByAccountId(EntityManager em, String queryName, long accountId) {
-    final Query querySumFromAccount = em.createNamedQuery(queryName);
-    querySumFromAccount.setParameter(PARAMETER_ACCOUNT_ID, accountId);
-    final BigDecimal result = (BigDecimal) querySumFromAccount.getSingleResult();
+  private static BigDecimal ofNullable(BigDecimal result) {
     return result != null ? result : BigDecimal.ZERO;
   }
 

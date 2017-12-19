@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  *
@@ -27,13 +28,23 @@ public class AccountEntity {
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   private UserEntity user;
 
-  public BigDecimal getBalance(EntityManager em) {
-    em.createNativeQuery("LOCK TABLE TransactionEntity WRITE ").executeUpdate();
+  public boolean isBankAccount() {
+    return id == BANK_ACCOUNT_ID;
+  }
 
-    final BigDecimal sumToAccount = TransactionEntity.getSumToAccount(em, id);
-    final BigDecimal sumFromAccount = TransactionEntity.getSumFromAccount(em, id);
-    return id != BANK_ACCOUNT_ID ? sumToAccount.subtract(sumFromAccount) :
-        sumFromAccount.subtract(sumToAccount);
+  public BigDecimal getBalance(EntityManager em) {
+    final Optional<AccountSummary> optionalSummary =
+        TransactionEntity.getSummaryByAccountId(em, id);
+    return optionalSummary
+        .map(summary -> {
+          final BigDecimal balance = summary.getSumToAccount().subtract(summary.getSumFromAccount());
+          return isBankAccount() ? balance.negate() : balance;
+        })
+        .orElse(BigDecimal.ZERO);
+  }
+
+  public boolean hasEnoughFunds(EntityManager em, BigDecimal withdrawalAmount) {
+    return getBalance(em).compareTo(withdrawalAmount) >= 0;
   }
 
 }
