@@ -7,6 +7,7 @@
 
     <class>kae.demo.transferrest.api.data.UserEntity</class>
     <class>kae.demo.transferrest.api.data.AccountEntity</class>
+    <class>kae.demo.transferrest.api.data.AccountBalanceEntity</class>
     <class>kae.demo.transferrest.api.data.TransactionEntity</class>
 
     <exclude-unlisted-classes>true</exclude-unlisted-classes>

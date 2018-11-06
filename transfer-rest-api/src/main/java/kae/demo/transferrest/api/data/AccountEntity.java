@@ -1,19 +1,23 @@
 package kae.demo.transferrest.api.data;
 
-import lombok.AllArgsConstructor;
+import java.math.BigDecimal;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.ws.rs.BadRequestException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.util.Optional;
 
 /** */
 @Entity
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 public class AccountEntity {
 
@@ -26,24 +30,34 @@ public class AccountEntity {
   @ManyToOne(optional = false, fetch = FetchType.LAZY)
   private UserEntity user;
 
+  @OneToOne(mappedBy = "account", cascade = CascadeType.ALL, optional = false)
+  private AccountBalanceEntity balance;
+
+  public AccountEntity(long id, UserEntity user) {
+    this.id = id;
+    this.user = user;
+    this.balance = new AccountBalanceEntity(this);
+  }
+
   public boolean isBankAccount() {
     return id == BANK_ACCOUNT_ID;
   }
 
-  public BigDecimal getBalance(EntityManager em) {
-    final Optional<AccountSummary> optionalSummary =
-        TransactionEntity.getSummaryByAccountId(em, id);
-    return optionalSummary
-        .map(
-            summary -> {
-              final BigDecimal balance =
-                  summary.getSumToAccount().subtract(summary.getSumFromAccount());
-              return isBankAccount() ? balance.negate() : balance;
-            })
-        .orElse(BigDecimal.ZERO);
+  public BigDecimal getBalance() {
+    return isBankAccount() ? balance.getValue().negate() : balance.getValue();
   }
 
-  public boolean hasEnoughFunds(EntityManager em, BigDecimal withdrawalAmount) {
-    return getBalance(em).compareTo(withdrawalAmount) >= 0;
+  public void updateBalance(BigDecimal delta) {
+    if (delta.compareTo(BigDecimal.ZERO) < 0
+        && !isBankAccount()
+        && !hasEnoughFunds(delta.negate())) {
+      throw new BadRequestException("Not enough funds");
+    }
+
+    balance.setValue(balance.getValue().add(delta));
+  }
+
+  private boolean hasEnoughFunds(BigDecimal withdrawalAmount) {
+    return getBalance().compareTo(withdrawalAmount) >= 0;
   }
 }

@@ -1,9 +1,12 @@
 package kae.demo.transferrest.api;
 
-import kae.demo.transferrest.api.data.AccountEntity;
-import kae.demo.transferrest.api.data.UserEntity;
-import kae.demo.transferrest.api.dto.Account;
+import static kae.demo.transferrest.api.ResponseUtils.created;
+import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturn;
+import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturnWithTransaction;
+import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeWithTransaction;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -11,16 +14,20 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static kae.demo.transferrest.api.ResponseUtils.created;
-import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.*;
+import kae.demo.transferrest.api.data.AccountEntity;
+import kae.demo.transferrest.api.data.UserEntity;
+import kae.demo.transferrest.api.dto.Account;
 
 /** */
 @Path("users/{userId}/accounts")
@@ -102,6 +109,6 @@ public class AccountResource {
 
   private Account toAccountDTO(EntityManager em, AccountEntity accountEntity) {
     return new Account(
-        accountEntity.getId(), accountEntity.getUser().getId(), accountEntity.getBalance(em));
+        accountEntity.getId(), accountEntity.getUser().getId(), accountEntity.getBalance());
   }
 }

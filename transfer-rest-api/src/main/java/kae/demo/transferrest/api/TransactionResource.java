@@ -1,9 +1,12 @@
 package kae.demo.transferrest.api;
 
-import kae.demo.transferrest.api.data.AccountEntity;
-import kae.demo.transferrest.api.data.TransactionEntity;
-import kae.demo.transferrest.api.dto.Transaction;
+import static kae.demo.transferrest.api.ResponseUtils.created;
+import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturn;
+import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeWithTransaction;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -11,18 +14,20 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static kae.demo.transferrest.api.ResponseUtils.created;
-import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturn;
-import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeWithTransaction;
+import kae.demo.transferrest.api.data.AccountEntity;
+import kae.demo.transferrest.api.data.TransactionEntity;
+import kae.demo.transferrest.api.dto.Transaction;
 
 /** */
 @Path("users/{userId}/accounts/{accountId}/transactions")
@@ -46,15 +51,14 @@ public class TransactionResource {
             transaction.getAmount(),
             transaction.getComment());
 
-    // TODO: comparing balance and persisting a new transaction should be atomic. Check the
-    // isolation level.
     executeWithTransaction(
         (em) -> {
           final AccountEntity fromAccount = transactionEntity.getFromAccount();
-          if (!fromAccount.isBankAccount()
-              && !fromAccount.hasEnoughFunds(em, transactionEntity.getAmount())) {
-            throw new BadRequestException("Not enough funds");
-          }
+          fromAccount.updateBalance(transaction.getAmount().negate());
+          em.merge(fromAccount);
+          final AccountEntity toAccount = transactionEntity.getToAccount();
+          toAccount.updateBalance(transaction.getAmount());
+          em.merge(toAccount);
           em.persist(transactionEntity);
         });
     return created(uriInfo, transactionEntity.getId());
