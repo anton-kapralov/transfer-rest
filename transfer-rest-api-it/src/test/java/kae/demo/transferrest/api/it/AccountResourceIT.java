@@ -9,9 +9,7 @@ import org.springframework.http.HttpStatus;
 import static kae.demo.transferrest.api.it.ITHelper.*;
 import static org.hamcrest.Matchers.greaterThan;
 
-/**
- *
- */
+/** */
 public class AccountResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
@@ -27,11 +25,10 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
     createUser(this, "Adam Smith");
     createAccount(this);
 
-    http().client(USERS_ENDPOINT)
-        .send()
-        .get(ACCOUNTS_PATH);
+    http().client(USERS_ENDPOINT).send().get(ACCOUNTS_PATH);
 
-    http().client(USERS_ENDPOINT)
+    http()
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -44,11 +41,10 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
     createUser(this, "John Maynard Keynes");
     createAccount(this);
 
-    http().client(USERS_ENDPOINT)
-        .send()
-        .get(ACCOUNTS_PATH + "/${accountId}");
+    http().client(USERS_ENDPOINT).send().get(ACCOUNTS_PATH + "/${accountId}");
 
-    http().client(USERS_ENDPOINT)
+    http()
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -63,13 +59,8 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
     createUser(this, "Karl Marx");
     createAccount(this);
 
-    http().client(USERS_ENDPOINT)
-        .send()
-        .delete(ACCOUNTS_PATH + "/${accountId}");
+    http().client(USERS_ENDPOINT).send().delete(ACCOUNTS_PATH + "/${accountId}");
 
-    http().client(USERS_ENDPOINT)
-        .receive()
-        .response(HttpStatus.NO_CONTENT);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
   }
-
 }

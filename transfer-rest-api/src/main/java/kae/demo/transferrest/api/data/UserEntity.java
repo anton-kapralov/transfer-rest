@@ -10,9 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
-/**
- *
- */
+/** */
 @Entity
 @Data
 @NoArgsConstructor
@@ -27,5 +25,4 @@ public class UserEntity {
   private long id;
 
   private String name;
-
 }

@@ -19,5 +19,4 @@ public class BasicExceptionHandler implements ExceptionMapper<Exception> {
     LOG.warn("Unexpected exception", e);
     return internalServerError(e.getMessage());
   }
-
 }

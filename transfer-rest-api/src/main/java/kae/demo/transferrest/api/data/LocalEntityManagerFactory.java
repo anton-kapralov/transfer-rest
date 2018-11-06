@@ -10,9 +10,7 @@ import javax.servlet.annotation.WebListener;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-/**
- *
- */
+/** */
 @WebListener
 public class LocalEntityManagerFactory implements ServletContextListener {
 
@@ -93,10 +91,10 @@ public class LocalEntityManagerFactory implements ServletContextListener {
     final UserEntity bank = new UserEntity(UserEntity.BANK_USER_ID, "Bank");
     final AccountEntity bankAccount = new AccountEntity(AccountEntity.BANK_ACCOUNT_ID, bank);
 
-    executeWithTransaction(em -> {
-      em.persist(bank);
-      em.persist(bankAccount);
-    });
+    executeWithTransaction(
+        em -> {
+          em.persist(bank);
+          em.persist(bankAccount);
+        });
   }
-
 }

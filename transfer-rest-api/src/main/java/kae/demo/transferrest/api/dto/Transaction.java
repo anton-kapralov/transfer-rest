@@ -8,9 +8,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
-/**
- *
- */
+/** */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,5 +26,4 @@ public class Transaction {
   private BigDecimal amount;
 
   private String comment;
-
 }

@@ -16,9 +16,7 @@ import static kae.demo.transferrest.api.ResponseUtils.created;
 import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturn;
 import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeWithTransaction;
 
-/**
- *
- */
+/** */
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class UserResource {
@@ -26,15 +24,16 @@ public class UserResource {
   @POST
   public Response createUser(@Context UriInfo uriInfo, User user) {
     UserEntity userEntity = new UserEntity(0, user.getName());
-    executeWithTransaction(
-        (em) -> em.persist(userEntity));
+    executeWithTransaction((em) -> em.persist(userEntity));
     return created(uriInfo, userEntity.getId());
   }
 
   @GET
   public List<User> getUsers() {
     return executeAndReturn(
-        (em) -> em.createQuery("SELECT u FROM UserEntity u ORDER BY u.name", UserEntity.class).getResultList())
+            (em) ->
+                em.createQuery("SELECT u FROM UserEntity u ORDER BY u.name", UserEntity.class)
+                    .getResultList())
         .stream()
         .map((this::toUserDTO))
         .collect(Collectors.toList());
@@ -56,8 +55,7 @@ public class UserResource {
       userEntity.setName(name);
     }
 
-    executeWithTransaction(
-        (em) -> em.merge(userEntity));
+    executeWithTransaction((em) -> em.merge(userEntity));
 
     return Response.noContent().build();
   }
@@ -65,14 +63,12 @@ public class UserResource {
   @DELETE
   @Path("/{id}")
   public Response deleteUser(@PathParam("id") long id) {
-    executeWithTransaction(
-        (em) -> em.remove(getUserEntity(em, id)));
+    executeWithTransaction((em) -> em.remove(getUserEntity(em, id)));
     return Response.noContent().build();
   }
 
   UserEntity getUserEntity(long id) {
-    return executeAndReturn(
-        (em) -> getUserEntity(em, id));
+    return executeAndReturn((em) -> getUserEntity(em, id));
   }
 
   private UserEntity getUserEntity(EntityManager em, long id) {
@@ -86,5 +82,4 @@ public class UserResource {
   private User toUserDTO(UserEntity userEntity) {
     return new User(userEntity.getId(), userEntity.getName());
   }
-
 }

@@ -4,9 +4,7 @@ import org.apache.catalina.startup.Tomcat;
 
 import java.util.Optional;
 
-/**
- *
- */
+/** */
 public class Main {
 
   public static void main(String[] args) throws Exception {
@@ -23,5 +21,4 @@ public class Main {
   private static Integer getPort() {
     return Integer.valueOf(Optional.ofNullable(System.getenv("PORT")).orElse("8080"));
   }
-
 }

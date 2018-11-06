@@ -12,5 +12,4 @@ public class WebApplicationExceptionHandler implements ExceptionMapper<WebApplic
   public Response toResponse(WebApplicationException e) {
     return ResponseUtils.build(e.getResponse().getStatus(), e.getMessage());
   }
-
 }

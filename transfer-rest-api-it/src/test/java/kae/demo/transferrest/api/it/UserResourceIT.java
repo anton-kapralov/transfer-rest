@@ -12,9 +12,7 @@ import static kae.demo.transferrest.api.it.ITHelper.USERS_ENDPOINT;
 import static kae.demo.transferrest.api.it.ITHelper.createUser;
 import static org.hamcrest.Matchers.greaterThan;
 
-/**
- *
- */
+/** */
 public class UserResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
@@ -28,11 +26,10 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   public void testGetUsers() throws Exception {
     createUser(this, "Lev Tolstoy");
 
-    http().client(USERS_ENDPOINT)
-        .send()
-        .get();
+    http().client(USERS_ENDPOINT).send().get();
 
-    http().client(USERS_ENDPOINT)
+    http()
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -44,11 +41,10 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   public void testGetUser() throws Exception {
     createUser(this, "Fedor Dostoevsky");
 
-    http().client(USERS_ENDPOINT)
-        .send()
-        .get("/${userId}");
+    http().client(USERS_ENDPOINT).send().get("/${userId}");
 
-    http().client(USERS_ENDPOINT)
+    http()
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -62,23 +58,18 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
     createUser(this, "Laurence Wachowski");
 
     final String newName = "Lana Wachowski";
-    http().client(USERS_ENDPOINT)
+    http()
+        .client(USERS_ENDPOINT)
         .send()
         .put("/${userId}")
-        .payload(Json.createObjectBuilder()
-            .add("name", newName)
-            .build()
-            .toString());
+        .payload(Json.createObjectBuilder().add("name", newName).build().toString());
 
-    http().client(USERS_ENDPOINT)
-        .receive()
-        .response(HttpStatus.NO_CONTENT);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
 
-    http().client(USERS_ENDPOINT)
-        .send()
-        .get("/${userId}");
+    http().client(USERS_ENDPOINT).send().get("/${userId}");
 
-    http().client(USERS_ENDPOINT)
+    http()
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -91,33 +82,20 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   public void testDeleteUser() throws Exception {
     createUser(this, "Anton Kapralov");
 
-    http().client(USERS_ENDPOINT)
-        .send()
-        .delete("/${userId}");
+    http().client(USERS_ENDPOINT).send().delete("/${userId}");
 
-    http().client(USERS_ENDPOINT)
-        .receive()
-        .response(HttpStatus.NO_CONTENT);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
 
-    http().client(USERS_ENDPOINT)
-        .send()
-        .get("/${userId}");
+    http().client(USERS_ENDPOINT).send().get("/${userId}");
 
-    http().client(USERS_ENDPOINT)
-        .receive()
-        .response(HttpStatus.NOT_FOUND);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NOT_FOUND);
   }
 
   @Test
   @CitrusTest
   public void testDeleteUnknownUser() throws Exception {
-    http().client(USERS_ENDPOINT)
-        .send()
-        .delete("/" + Integer.MAX_VALUE);
+    http().client(USERS_ENDPOINT).send().delete("/" + Integer.MAX_VALUE);
 
-    http().client(USERS_ENDPOINT)
-        .receive()
-        .response(HttpStatus.NOT_FOUND);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NOT_FOUND);
   }
-
 }
