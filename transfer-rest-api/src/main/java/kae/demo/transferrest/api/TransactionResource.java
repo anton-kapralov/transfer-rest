@@ -24,34 +24,35 @@ import static kae.demo.transferrest.api.ResponseUtils.created;
 import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeAndReturn;
 import static kae.demo.transferrest.api.data.LocalEntityManagerFactory.executeWithTransaction;
 
-/**
- *
- */
+/** */
 @Path("users/{userId}/accounts/{accountId}/transactions")
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class TransactionResource {
 
-  @Inject
-  private AccountResource accountResource;
+  @Inject private AccountResource accountResource;
 
   @POST
-  public Response createTransaction(@Context UriInfo uriInfo,
-                                    @PathParam("userId") long userId,
-                                    @PathParam("accountId") long accountId,
-                                    Transaction transaction) {
-    TransactionEntity transactionEntity = new TransactionEntity(
-        0,
-        ZonedDateTime.now(),
-        accountResource.getAccountEntity(userId, accountId),
-        accountResource.getAccountEntity(transaction.getToAccountId()),
-        transaction.getAmount(),
-        transaction.getComment());
+  public Response createTransaction(
+      @Context UriInfo uriInfo,
+      @PathParam("userId") long userId,
+      @PathParam("accountId") long accountId,
+      Transaction transaction) {
+    TransactionEntity transactionEntity =
+        new TransactionEntity(
+            0,
+            ZonedDateTime.now(),
+            accountResource.getAccountEntity(userId, accountId),
+            accountResource.getAccountEntity(transaction.getToAccountId()),
+            transaction.getAmount(),
+            transaction.getComment());
 
-    // TODO: comparing balance and persisting a new transaction should be atomic. Check the isolation level.
+    // TODO: comparing balance and persisting a new transaction should be atomic. Check the
+    // isolation level.
     executeWithTransaction(
         (em) -> {
           final AccountEntity fromAccount = transactionEntity.getFromAccount();
-          if (!fromAccount.isBankAccount() && !fromAccount.hasEnoughFunds(em, transactionEntity.getAmount())) {
+          if (!fromAccount.isBankAccount()
+              && !fromAccount.hasEnoughFunds(em, transactionEntity.getAmount())) {
             throw new BadRequestException("Not enough funds");
           }
           em.persist(transactionEntity);
@@ -60,36 +61,35 @@ public class TransactionResource {
   }
 
   @GET
-  public List<Transaction> getTransactions(@PathParam("userId") long userId, @PathParam("accountId") long accountId) {
+  public List<Transaction> getTransactions(
+      @PathParam("userId") long userId, @PathParam("accountId") long accountId) {
     return executeAndReturn(
-        (em) -> {
-          final CriteriaBuilder cb = em.getCriteriaBuilder();
-          final CriteriaQuery<TransactionEntity> cq = cb.createQuery(TransactionEntity.class);
-          final Root<TransactionEntity> root = cq.from(TransactionEntity.class);
-          final ParameterExpression<Long> userIdParameter = cb.parameter(Long.class);
-          final ParameterExpression<Long> accountIdParameter = cb.parameter(Long.class);
+            (em) -> {
+              final CriteriaBuilder cb = em.getCriteriaBuilder();
+              final CriteriaQuery<TransactionEntity> cq = cb.createQuery(TransactionEntity.class);
+              final Root<TransactionEntity> root = cq.from(TransactionEntity.class);
+              final ParameterExpression<Long> userIdParameter = cb.parameter(Long.class);
+              final ParameterExpression<Long> accountIdParameter = cb.parameter(Long.class);
 
-          cq.select(root)
-              .where(
-                  cb.or(
-                      cb.and(
-                          cb.equal(root.get("fromAccount").get("id"), accountIdParameter),
-                          cb.equal(root.get("fromAccount").get("user").get("id"), userIdParameter)
-                      ),
-                      cb.and(
-                          cb.equal(root.get("toAccount").get("id"), accountIdParameter),
-                          cb.equal(root.get("toAccount").get("user").get("id"), userIdParameter)
-                      )
-                  )
-              )
-              .orderBy(cb.asc(root.get("id")));
+              cq.select(root)
+                  .where(
+                      cb.or(
+                          cb.and(
+                              cb.equal(root.get("fromAccount").get("id"), accountIdParameter),
+                              cb.equal(
+                                  root.get("fromAccount").get("user").get("id"), userIdParameter)),
+                          cb.and(
+                              cb.equal(root.get("toAccount").get("id"), accountIdParameter),
+                              cb.equal(
+                                  root.get("toAccount").get("user").get("id"), userIdParameter))))
+                  .orderBy(cb.asc(root.get("id")));
 
-          final TypedQuery<TransactionEntity> query = em.createQuery(cq);
-          query.setParameter(userIdParameter, userId);
-          query.setParameter(accountIdParameter, accountId);
+              final TypedQuery<TransactionEntity> query = em.createQuery(cq);
+              query.setParameter(userIdParameter, userId);
+              query.setParameter(accountIdParameter, accountId);
 
-          return query.getResultList();
-        })
+              return query.getResultList();
+            })
         .stream()
         .map(this::toTransactionDTO)
         .collect(Collectors.toList());
@@ -97,39 +97,47 @@ public class TransactionResource {
 
   @GET
   @Path("/{id}")
-  public Transaction getTransaction(@PathParam("userId") long userId,
-                                    @PathParam("accountId") long accountId,
-                                    @PathParam("id") long id) {
+  public Transaction getTransaction(
+      @PathParam("userId") long userId,
+      @PathParam("accountId") long accountId,
+      @PathParam("id") long id) {
 
-    return toTransactionDTO(executeAndReturn(
-        (em) -> getTransactionEntity(em, userId, accountId, id)));
+    return toTransactionDTO(
+        executeAndReturn((em) -> getTransactionEntity(em, userId, accountId, id)));
   }
 
   @DELETE
   @Path("/{id}")
-  public Response deleteTransaction(@PathParam("userId") long userId,
-                                    @PathParam("accountId") long accountId,
-                                    @PathParam("id") long id) {
+  public Response deleteTransaction(
+      @PathParam("userId") long userId,
+      @PathParam("accountId") long accountId,
+      @PathParam("id") long id) {
     executeWithTransaction((em -> em.remove(getTransactionEntity(em, userId, accountId, id))));
     return Response.noContent().build();
   }
 
-  private TransactionEntity getTransactionEntity(EntityManager em, long userId, long accountId, long id) {
+  private TransactionEntity getTransactionEntity(
+      EntityManager em, long userId, long accountId, long id) {
     final TransactionEntity transactionEntity = em.find(TransactionEntity.class, id);
     if (transactionEntity != null) {
       final boolean transactionOfFromAccount =
-          transactionEntity.getFromAccount().getId() == accountId &&
-              transactionEntity.getFromAccount().getUser().getId() == userId;
+          transactionEntity.getFromAccount().getId() == accountId
+              && transactionEntity.getFromAccount().getUser().getId() == userId;
       final boolean transactionOfToAccount =
-          transactionEntity.getToAccount().getId() == accountId &&
-              transactionEntity.getToAccount().getUser().getId() == userId;
+          transactionEntity.getToAccount().getId() == accountId
+              && transactionEntity.getToAccount().getUser().getId() == userId;
 
       if (transactionOfFromAccount || transactionOfToAccount) {
         return transactionEntity;
       }
     }
-    throw new NotFoundException("Transaction has not been found by id " + id +
-        " and accountId " + accountId + " and userId " + userId);
+    throw new NotFoundException(
+        "Transaction has not been found by id "
+            + id
+            + " and accountId "
+            + accountId
+            + " and userId "
+            + userId);
   }
 
   private Transaction toTransactionDTO(TransactionEntity transactionEntity) {
@@ -141,5 +149,4 @@ public class TransactionResource {
         transactionEntity.getAmount(),
         transactionEntity.getComment());
   }
-
 }

@@ -9,5 +9,4 @@ public class AccountSummary {
 
   private final BigDecimal sumToAccount;
   private final BigDecimal sumFromAccount;
-
 }

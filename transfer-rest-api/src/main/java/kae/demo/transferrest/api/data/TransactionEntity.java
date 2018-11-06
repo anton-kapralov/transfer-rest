@@ -10,20 +10,19 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-/**
- *
- */
+/** */
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
 @NamedNativeQueries({
-    @NamedNativeQuery(
-        name = TransactionEntity.QUERY_ACCOUNT_BALANCE,
-        query = "SELECT amountTo, amountFrom FROM " +
-            "(SELECT SUM(t.amount) as amountTo FROM TransactionEntity t WHERE t.toAccount_id=?), " +
-            "(SELECT SUM(t.amount) as amountFrom FROM TransactionEntity t WHERE t.fromAccount_id=?)")
+  @NamedNativeQuery(
+      name = TransactionEntity.QUERY_ACCOUNT_BALANCE,
+      query =
+          "SELECT amountTo, amountFrom FROM "
+              + "(SELECT SUM(t.amount) as amountTo FROM TransactionEntity t WHERE t.toAccount_id=?), "
+              + "(SELECT SUM(t.amount) as amountFrom FROM TransactionEntity t WHERE t.fromAccount_id=?)")
 })
 public class TransactionEntity {
 
@@ -64,5 +63,4 @@ public class TransactionEntity {
   private static BigDecimal ofNullable(BigDecimal result) {
     return result != null ? result : BigDecimal.ZERO;
   }
-
 }

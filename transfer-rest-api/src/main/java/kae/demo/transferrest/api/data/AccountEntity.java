@@ -9,9 +9,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-/**
- *
- */
+/** */
 @Entity
 @Data
 @NoArgsConstructor
@@ -36,15 +34,16 @@ public class AccountEntity {
     final Optional<AccountSummary> optionalSummary =
         TransactionEntity.getSummaryByAccountId(em, id);
     return optionalSummary
-        .map(summary -> {
-          final BigDecimal balance = summary.getSumToAccount().subtract(summary.getSumFromAccount());
-          return isBankAccount() ? balance.negate() : balance;
-        })
+        .map(
+            summary -> {
+              final BigDecimal balance =
+                  summary.getSumToAccount().subtract(summary.getSumFromAccount());
+              return isBankAccount() ? balance.negate() : balance;
+            })
         .orElse(BigDecimal.ZERO);
   }
 
   public boolean hasEnoughFunds(EntityManager em, BigDecimal withdrawalAmount) {
     return getBalance(em).compareTo(withdrawalAmount) >= 0;
   }
-
 }
