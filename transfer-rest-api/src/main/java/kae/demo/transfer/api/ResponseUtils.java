@@ -1,6 +1,6 @@
 package kae.demo.transfer.api;
 
-import kae.demo.transfer.api.dto.MessageWrapper;
+import kae.demo.transfer.api.dto.Message;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -20,7 +20,7 @@ public class ResponseUtils {
     return Response.created(builder.build()).build();
   }
 
-  static Response build(Response.Status status, String message) {
+  private static Response build(Response.Status status, String message) {
     return buildWithMessage(Response.status(status), message);
   }
 
@@ -31,7 +31,7 @@ public class ResponseUtils {
   private static Response buildWithMessage(Response.ResponseBuilder builder, String message) {
     return builder
         .type(MediaType.APPLICATION_JSON_TYPE.withCharset("UTF-8"))
-        .entity(new MessageWrapper(message))
+        .entity(new Message(message))
         .build();
   }
 }

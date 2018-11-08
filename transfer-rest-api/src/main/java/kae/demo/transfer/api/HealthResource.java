@@ -12,7 +12,7 @@ public class HealthResource {
 
   @GET
   @Produces(MediaType.TEXT_PLAIN)
-  public Response sayHello() {
+  public Response ping() {
     return Response.ok().entity("OK").build();
   }
 }
