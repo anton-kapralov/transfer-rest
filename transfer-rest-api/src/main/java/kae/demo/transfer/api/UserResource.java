@@ -1,41 +1,49 @@
 package kae.demo.transfer.api;
 
-import kae.demo.transfer.persistence.LocalEntityManagerFactory;
-import kae.demo.transfer.user.UserEntity;
-import kae.demo.transfer.user.User;
-
+import java.util.List;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.NotFoundException;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.util.List;
-import java.util.stream.Collectors;
+import kae.demo.transfer.persistence.LocalEntityManagerFactory;
+import kae.demo.transfer.user.User;
+import kae.demo.transfer.user.UserEntity;
+import kae.demo.transfer.user.UserService;
 
 /** */
 @Path("users")
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class UserResource {
 
+  private final UserService userService;
+
+  @Inject
+  public UserResource(UserService userService) {
+    this.userService = userService;
+  }
+
   @POST
   public Response createUser(@Context UriInfo uriInfo, User user) {
     UserEntity userEntity = new UserEntity(0, user.getName());
     LocalEntityManagerFactory.executeWithTransaction((em) -> em.persist(userEntity));
     return Response.created(
-        uriInfo.getAbsolutePathBuilder().path(Long.toString(userEntity.getId())).build())
+            uriInfo.getAbsolutePathBuilder().path(Long.toString(userEntity.getId())).build())
         .build();
   }
 
   @GET
   public List<User> getUsers() {
-    return LocalEntityManagerFactory.executeAndReturn(
-            (em) ->
-                em.createQuery("SELECT u FROM UserEntity u ORDER BY u.name", UserEntity.class)
-                    .getResultList())
-        .stream()
-        .map((this::toUserDTO))
-        .collect(Collectors.toList());
+    return userService.getUsers();
   }
 
   @GET
