@@ -48,7 +48,7 @@
           <finalName>transfer-rest-api-${project.version}</finalName>
           <archive>
             <manifest>
-              <mainClass>kae.demo.transferrest.api.Main</mainClass>
+              <mainClass>kae.demo.transfer.api.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
