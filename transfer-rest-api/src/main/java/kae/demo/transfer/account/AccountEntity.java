@@ -1,4 +1,4 @@
-package kae.demo.transfer.api.data;
+package kae.demo.transfer.account;
 
 import java.math.BigDecimal;
 import javax.persistence.CascadeType;
@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.ws.rs.BadRequestException;
+import kae.demo.transfer.user.UserEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

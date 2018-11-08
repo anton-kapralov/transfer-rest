@@ -1,8 +1,7 @@
 package kae.demo.transfer.api;
 
-import static kae.demo.transfer.api.ResponseUtils.created;
-import static kae.demo.transfer.api.data.LocalEntityManagerFactory.executeAndReturn;
-import static kae.demo.transfer.api.data.LocalEntityManagerFactory.executeWithTransaction;
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeAndReturn;
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeWithTransaction;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -25,9 +24,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import kae.demo.transfer.api.dto.Transaction;
-import kae.demo.transfer.api.data.AccountEntity;
-import kae.demo.transfer.api.data.TransactionEntity;
+import kae.demo.transfer.transaction.Transaction;
+import kae.demo.transfer.account.AccountEntity;
+import kae.demo.transfer.transaction.TransactionEntity;
 
 /** */
 @Path("users/{userId}/accounts/{accountId}/transactions")
@@ -61,7 +60,9 @@ public class TransactionResource {
           em.merge(toAccount);
           em.persist(transactionEntity);
         });
-    return created(uriInfo, transactionEntity.getId());
+    return Response.created(
+        uriInfo.getAbsolutePathBuilder().path(Long.toString(transactionEntity.getId())).build())
+        .build();
   }
 
   @GET

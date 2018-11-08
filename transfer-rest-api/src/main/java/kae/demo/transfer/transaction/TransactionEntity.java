@@ -1,5 +1,7 @@
-package kae.demo.transfer.api.data;
+package kae.demo.transfer.transaction;
 
+import kae.demo.transfer.account.AccountEntity;
+import kae.demo.transfer.account.AccountSummary;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

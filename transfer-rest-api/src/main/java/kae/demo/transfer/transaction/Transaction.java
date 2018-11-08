@@ -1,4 +1,4 @@
-package kae.demo.transfer.api.dto;
+package kae.demo.transfer.transaction;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

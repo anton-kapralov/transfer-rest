@@ -1,9 +1,8 @@
 package kae.demo.transfer.api;
 
-import static kae.demo.transfer.api.ResponseUtils.created;
-import static kae.demo.transfer.api.data.LocalEntityManagerFactory.executeAndReturn;
-import static kae.demo.transfer.api.data.LocalEntityManagerFactory.executeAndReturnWithTransaction;
-import static kae.demo.transfer.api.data.LocalEntityManagerFactory.executeWithTransaction;
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeAndReturn;
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeAndReturnWithTransaction;
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeWithTransaction;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,9 +24,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import kae.demo.transfer.api.data.UserEntity;
-import kae.demo.transfer.api.data.AccountEntity;
-import kae.demo.transfer.api.dto.Account;
+import kae.demo.transfer.user.UserEntity;
+import kae.demo.transfer.account.AccountEntity;
+import kae.demo.transfer.account.Account;
 
 /** */
 @Path("users/{userId}/accounts")
@@ -42,7 +41,9 @@ public class AccountResource {
     AccountEntity accountEntity = new AccountEntity(0, userEntity);
     executeWithTransaction((em) -> em.persist(accountEntity));
 
-    return created(uriInfo, accountEntity.getId());
+    return Response.created(
+        uriInfo.getAbsolutePathBuilder().path(Long.toString(accountEntity.getId())).build())
+        .build();
   }
 
   @GET

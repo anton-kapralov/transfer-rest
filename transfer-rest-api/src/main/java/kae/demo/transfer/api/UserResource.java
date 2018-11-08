@@ -1,8 +1,8 @@
 package kae.demo.transfer.api;
 
-import kae.demo.transfer.api.data.LocalEntityManagerFactory;
-import kae.demo.transfer.api.data.UserEntity;
-import kae.demo.transfer.api.dto.User;
+import kae.demo.transfer.persistence.LocalEntityManagerFactory;
+import kae.demo.transfer.user.UserEntity;
+import kae.demo.transfer.user.User;
 
 import javax.persistence.EntityManager;
 import javax.ws.rs.*;
@@ -22,7 +22,9 @@ public class UserResource {
   public Response createUser(@Context UriInfo uriInfo, User user) {
     UserEntity userEntity = new UserEntity(0, user.getName());
     LocalEntityManagerFactory.executeWithTransaction((em) -> em.persist(userEntity));
-    return ResponseUtils.created(uriInfo, userEntity.getId());
+    return Response.created(
+        uriInfo.getAbsolutePathBuilder().path(Long.toString(userEntity.getId())).build())
+        .build();
   }
 
   @GET

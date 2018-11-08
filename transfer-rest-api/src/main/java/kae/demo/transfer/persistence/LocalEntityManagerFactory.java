@@ -1,29 +1,22 @@
-package kae.demo.transfer.api.data;
+package kae.demo.transfer.persistence;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 /** */
-@WebListener
-public class LocalEntityManagerFactory implements ServletContextListener {
+public class LocalEntityManagerFactory {
 
-  private static EntityManagerFactory emf;
+  private static volatile EntityManagerFactory emf;
 
-  @Override
-  public void contextInitialized(ServletContextEvent event) {
+  public static void initialize() {
     emf = Persistence.createEntityManagerFactory("TransferPU");
-    loadBasicData();
   }
 
-  @Override
-  public void contextDestroyed(ServletContextEvent event) {
+  public static void close() {
     if (emf != null) {
       emf.close();
     }
@@ -85,16 +78,5 @@ public class LocalEntityManagerFactory implements ServletContextListener {
       }
       em.close();
     }
-  }
-
-  private void loadBasicData() {
-    final UserEntity bank = new UserEntity(UserEntity.BANK_USER_ID, "Bank");
-    final AccountEntity bankAccount = new AccountEntity(AccountEntity.BANK_ACCOUNT_ID, bank);
-
-    executeWithTransaction(
-        em -> {
-          em.persist(bank);
-          em.persist(bankAccount);
-        });
   }
 }

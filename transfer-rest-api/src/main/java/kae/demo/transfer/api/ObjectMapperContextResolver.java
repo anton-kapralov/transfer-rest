@@ -1,4 +1,4 @@
-package kae.demo.transfer.api.dto;
+package kae.demo.transfer.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

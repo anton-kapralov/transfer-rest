@@ -1,4 +1,4 @@
-package kae.demo.transfer.api.data;
+package kae.demo.transfer.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

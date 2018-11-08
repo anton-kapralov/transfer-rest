@@ -1,4 +1,4 @@
-package kae.demo.transfer.api.data;
+package kae.demo.transfer.account;
 
 import java.math.BigDecimal;
 import javax.persistence.Entity;
