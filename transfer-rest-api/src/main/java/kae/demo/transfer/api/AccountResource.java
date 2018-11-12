@@ -24,25 +24,26 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import kae.demo.transfer.user.UserEntity;
-import kae.demo.transfer.account.AccountEntity;
 import kae.demo.transfer.account.Account;
+import kae.demo.transfer.account.AccountEntity;
+import kae.demo.transfer.user.UserEntity;
+import kae.demo.transfer.user.UserRepository;
 
 /** */
 @Path("users/{userId}/accounts")
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class AccountResource {
 
-  @Inject private UserResource userResource;
+  @Inject private UserRepository userRepository;
 
   @POST
   public Response createAccount(@Context UriInfo uriInfo, @PathParam("userId") long userId) {
-    UserEntity userEntity = userResource.getUserEntity(userId);
+    UserEntity userEntity = userRepository.get(userId);
     AccountEntity accountEntity = new AccountEntity(0, userEntity);
     executeWithTransaction((em) -> em.persist(accountEntity));
 
     return Response.created(
-        uriInfo.getAbsolutePathBuilder().path(Long.toString(accountEntity.getId())).build())
+            uriInfo.getAbsolutePathBuilder().path(Long.toString(accountEntity.getId())).build())
         .build();
   }
 

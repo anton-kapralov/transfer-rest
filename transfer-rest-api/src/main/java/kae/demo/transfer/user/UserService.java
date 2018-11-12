@@ -14,8 +14,32 @@ public class UserService {
     this.userRepository = userRepository;
   }
 
-  public List<User> getUsers() {
-    return userRepository.getUsers().stream().map((this::toUserDTO)).collect(Collectors.toList());
+  public long create(User user) {
+    final UserEntity userEntity = userRepository.create(user.getName());
+    return userEntity.getId();
+  }
+
+  public List<User> list() {
+    return userRepository.list().stream().map((this::toUserDTO)).collect(Collectors.toList());
+  }
+
+  public User get(long id) {
+    return toUserDTO(userRepository.get(id));
+  }
+
+  public void update(long id, User userUpdate) {
+    final UserEntity userEntity = userRepository.get(id);
+
+    final String name = userUpdate.getName();
+    if (name != null && !name.isEmpty()) {
+      userEntity.setName(name);
+    }
+
+    userRepository.update(userEntity);
+  }
+
+  public void delete(long id) {
+    userRepository.delete(id);
   }
 
   private User toUserDTO(UserEntity userEntity) {
