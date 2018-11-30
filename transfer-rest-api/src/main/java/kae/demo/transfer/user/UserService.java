@@ -1,5 +1,9 @@
 package kae.demo.transfer.user;
 
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeAndReturn;
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeAndReturnWithTransaction;
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeWithTransaction;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
@@ -15,31 +19,38 @@ public class UserService {
   }
 
   public long create(User user) {
-    final UserEntity userEntity = userRepository.create(user.getName());
+    final UserEntity userEntity =
+        executeAndReturnWithTransaction((em) -> userRepository.create(em, user.getName()));
     return userEntity.getId();
   }
 
   public List<User> list() {
-    return userRepository.list().stream().map((this::toUserDTO)).collect(Collectors.toList());
+    return executeAndReturn(userRepository::list)
+        .stream()
+        .map((this::toUserDTO))
+        .collect(Collectors.toList());
   }
 
   public User get(long id) {
-    return toUserDTO(userRepository.get(id));
+    return toUserDTO(executeAndReturn((em) -> userRepository.get(em, id)));
   }
 
   public void update(long id, User userUpdate) {
-    final UserEntity userEntity = userRepository.get(id);
+    executeWithTransaction(
+        (em) -> {
+          final UserEntity userEntity = userRepository.get(em, id);
 
-    final String name = userUpdate.getName();
-    if (name != null && !name.isEmpty()) {
-      userEntity.setName(name);
-    }
+          final String name = userUpdate.getName();
+          if (name != null && !name.isEmpty()) {
+            userEntity.setName(name);
+          }
 
-    userRepository.update(userEntity);
+          userRepository.update(em, userEntity);
+        });
   }
 
   public void delete(long id) {
-    userRepository.delete(id);
+    executeWithTransaction((em) -> userRepository.delete(em, id));
   }
 
   private User toUserDTO(UserEntity userEntity) {

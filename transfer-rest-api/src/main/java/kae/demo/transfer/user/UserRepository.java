@@ -1,8 +1,5 @@
 package kae.demo.transfer.user;
 
-import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeAndReturn;
-import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeWithTransaction;
-
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.NotFoundException;
@@ -10,24 +7,18 @@ import javax.ws.rs.NotFoundException;
 /** */
 public class UserRepository {
 
-  public UserEntity create(String userName) {
+  public UserEntity create(EntityManager em, String userName) {
     UserEntity userEntity = new UserEntity(0, userName);
-    executeWithTransaction((em) -> em.persist(userEntity));
+    em.persist(userEntity);
     return userEntity;
   }
 
-  public List<UserEntity> list() {
-    return executeAndReturn(
-        (em) ->
-            em.createQuery("SELECT u FROM UserEntity u ORDER BY u.name", UserEntity.class)
-                .getResultList());
+  public List<UserEntity> list(EntityManager em) {
+    return em.createQuery("SELECT u FROM UserEntity u ORDER BY u.name", UserEntity.class)
+        .getResultList();
   }
 
-  public UserEntity get(long id) {
-    return executeAndReturn((em) -> get(em, id));
-  }
-
-  private UserEntity get(EntityManager em, long id) {
+  public UserEntity get(EntityManager em, long id) {
     final UserEntity userEntity = em.find(UserEntity.class, id);
     if (userEntity == null) {
       // TODO: replace with domain exception.
@@ -36,11 +27,11 @@ public class UserRepository {
     return userEntity;
   }
 
-  public void update(UserEntity userEntity) {
-    executeWithTransaction((em) -> em.merge(userEntity));
+  public void update(EntityManager em, UserEntity userEntity) {
+    em.merge(userEntity);
   }
 
-  public void delete(long id) {
-    executeWithTransaction((em) -> em.remove(get(em, id)));
+  public void delete(EntityManager em, long id) {
+    em.remove(get(em, id));
   }
 }

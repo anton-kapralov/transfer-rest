@@ -38,12 +38,17 @@ public class AccountResource {
 
   @POST
   public Response createAccount(@Context UriInfo uriInfo, @PathParam("userId") long userId) {
-    UserEntity userEntity = userRepository.get(userId);
-    AccountEntity accountEntity = new AccountEntity(0, userEntity);
-    executeWithTransaction((em) -> em.persist(accountEntity));
+    final AccountEntity accountEntity1 =
+        executeAndReturnWithTransaction(
+            (em) -> {
+              UserEntity userEntity = userRepository.get(em, userId);
+              AccountEntity accountEntity = new AccountEntity(0, userEntity);
+              em.persist(accountEntity);
+              return accountEntity;
+            });
 
     return Response.created(
-            uriInfo.getAbsolutePathBuilder().path(Long.toString(accountEntity.getId())).build())
+            uriInfo.getAbsolutePathBuilder().path(Long.toString(accountEntity1.getId())).build())
         .build();
   }
 
