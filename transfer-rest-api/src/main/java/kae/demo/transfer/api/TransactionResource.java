@@ -1,6 +1,7 @@
 package kae.demo.transfer.api;
 
 import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeAndReturn;
+import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeAndReturnWithTransaction;
 import static kae.demo.transfer.persistence.LocalEntityManagerFactory.executeWithTransaction;
 
 import java.time.ZonedDateTime;
@@ -24,8 +25,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import kae.demo.transfer.transaction.Transaction;
 import kae.demo.transfer.account.AccountEntity;
+import kae.demo.transfer.account.AccountRepository;
+import kae.demo.transfer.transaction.Transaction;
 import kae.demo.transfer.transaction.TransactionEntity;
 
 /** */
@@ -33,7 +35,7 @@ import kae.demo.transfer.transaction.TransactionEntity;
 @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
 public class TransactionResource {
 
-  @Inject private AccountResource accountResource;
+  @Inject private AccountRepository accountRepository;
 
   @POST
   public Response createTransaction(
@@ -41,27 +43,31 @@ public class TransactionResource {
       @PathParam("userId") long userId,
       @PathParam("accountId") long accountId,
       Transaction transaction) {
-    TransactionEntity transactionEntity =
-        new TransactionEntity(
-            0,
-            ZonedDateTime.now(),
-            accountResource.getAccountEntity(userId, accountId),
-            accountResource.getAccountEntity(transaction.getToAccountId()),
-            transaction.getAmount(),
-            transaction.getComment());
-
-    executeWithTransaction(
-        (em) -> {
-          final AccountEntity fromAccount = transactionEntity.getFromAccount();
-          fromAccount.updateBalance(transaction.getAmount().negate());
-          em.merge(fromAccount);
-          final AccountEntity toAccount = transactionEntity.getToAccount();
-          toAccount.updateBalance(transaction.getAmount());
-          em.merge(toAccount);
-          em.persist(transactionEntity);
-        });
+    final TransactionEntity transactionEntity1 =
+        executeAndReturnWithTransaction(
+            (em) -> {
+              TransactionEntity transactionEntity =
+                  new TransactionEntity(
+                      0,
+                      ZonedDateTime.now(),
+                      accountRepository.get(em, userId, accountId),
+                      accountRepository.get(em, transaction.getToAccountId()),
+                      transaction.getAmount(),
+                      transaction.getComment());
+              final AccountEntity fromAccount = transactionEntity.getFromAccount();
+              fromAccount.updateBalance(transaction.getAmount().negate());
+              em.merge(fromAccount);
+              final AccountEntity toAccount = transactionEntity.getToAccount();
+              toAccount.updateBalance(transaction.getAmount());
+              em.merge(toAccount);
+              em.persist(transactionEntity);
+              return transactionEntity;
+            });
     return Response.created(
-        uriInfo.getAbsolutePathBuilder().path(Long.toString(transactionEntity.getId())).build())
+            uriInfo
+                .getAbsolutePathBuilder()
+                .path(Long.toString(transactionEntity1.getId()))
+                .build())
         .build();
   }
 
