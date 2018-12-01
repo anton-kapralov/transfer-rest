@@ -1,10 +1,9 @@
 package kae.demo.transfer.api.it;
 
-import static kae.demo.transfer.api.it.Endpoints.ACCOUNTS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.BANK_ACCOUNT_TRANSACTIONS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.TRANSACTIONS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.USERS_ENDPOINT;
-import static org.junit.Assert.assertNotNull;
+import static kae.demo.transfer.api.it.IdExtractor.extractIdFromLocation;
 
 import com.consol.citrus.actions.AbstractTestAction;
 import com.consol.citrus.context.TestContext;
@@ -13,56 +12,9 @@ import javax.json.Json;
 import org.springframework.http.HttpStatus;
 
 /** */
-class ITHelper {
+class TransactionSeeder {
 
-  static void createUser(JUnit4CitrusTestDesigner testDesigner, String name) {
-    testDesigner
-        .http()
-        .client(USERS_ENDPOINT)
-        .send()
-        .post()
-        .payload(Json.createObjectBuilder().add("name", name).build().toString());
-
-    testDesigner
-        .http()
-        .client(USERS_ENDPOINT)
-        .receive()
-        .response(HttpStatus.CREATED)
-        .extractFromHeader("Location", "${location}");
-
-    testDesigner.action(
-        new AbstractTestAction() {
-          @Override
-          public void doExecute(TestContext context) {
-            context.setVariable("userId", extractIdFromLocation(context));
-          }
-        });
-  }
-
-  static void createAccount(JUnit4CitrusTestDesigner testDesigner) {
-    testDesigner.http().client(USERS_ENDPOINT).send().post(ACCOUNTS_PATH);
-
-    testDesigner
-        .http()
-        .client(USERS_ENDPOINT)
-        .receive()
-        .response(HttpStatus.CREATED)
-        .extractFromHeader("Location", "${location}");
-
-    testDesigner.action(
-        new AbstractTestAction() {
-          @Override
-          public void doExecute(TestContext context) {
-            context.setVariable("accountId", extractIdFromLocation(context));
-          }
-        });
-  }
-
-  private static long extractIdFromLocation(TestContext context) {
-    final String location = context.getVariable("location");
-    assertNotNull(location);
-    return Long.valueOf(location.substring(location.lastIndexOf("/") + 1));
-  }
+  private TransactionSeeder() {}
 
   static void createTransaction(
       JUnit4CitrusTestDesigner testDesigner,
@@ -71,7 +23,7 @@ class ITHelper {
       String to,
       long amount,
       String comment) {
-    createUser(testDesigner, to);
+    UserSeeder.createUser(testDesigner, to);
     testDesigner.action(
         new AbstractTestAction() {
           @Override
@@ -80,7 +32,7 @@ class ITHelper {
           }
         });
 
-    createAccount(testDesigner);
+    AccountSeeder.createAccount(testDesigner);
     testDesigner.action(
         new AbstractTestAction() {
           @Override
@@ -89,8 +41,8 @@ class ITHelper {
           }
         });
 
-    createUser(testDesigner, from);
-    createAccount(testDesigner);
+    UserSeeder.createUser(testDesigner, from);
+    AccountSeeder.createAccount(testDesigner);
 
     testDesigner
         .http()

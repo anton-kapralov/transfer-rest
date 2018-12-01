@@ -1,6 +1,7 @@
 package kae.demo.transfer.api.it;
 
 import static kae.demo.transfer.api.it.Endpoints.USERS_ENDPOINT;
+import static kae.demo.transfer.api.it.UserSeeder.createUser;
 import static org.hamcrest.Matchers.greaterThan;
 
 import com.consol.citrus.annotations.CitrusTest;
@@ -16,13 +17,13 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testCreateUser() {
-    ITHelper.createUser(this, "Viktor Pelevin");
+    createUser(this, "Viktor Pelevin");
   }
 
   @Test
   @CitrusTest
   public void testGetUsers() {
-    ITHelper.createUser(this, "Lev Tolstoy");
+    createUser(this, "Lev Tolstoy");
 
     http().client(USERS_ENDPOINT).send().get();
 
@@ -37,7 +38,7 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testGetUser() {
-    ITHelper.createUser(this, "Fedor Dostoevsky");
+    createUser(this, "Fedor Dostoevsky");
 
     http().client(USERS_ENDPOINT).send().get("/${userId}");
 
@@ -53,7 +54,7 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testUpdateUser() {
-    ITHelper.createUser(this, "Laurence Wachowski");
+    createUser(this, "Laurence Wachowski");
 
     final String newName = "Lana Wachowski";
     http()
@@ -78,7 +79,7 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testDeleteUser() {
-    ITHelper.createUser(this, "Anton Kapralov");
+    createUser(this, "Anton Kapralov");
 
     http().client(USERS_ENDPOINT).send().delete("/${userId}");
 

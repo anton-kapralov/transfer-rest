@@ -1,10 +1,13 @@
 package kae.demo.transfer.api.it;
 
+import static kae.demo.transfer.api.it.AccountSeeder.createAccount;
 import static kae.demo.transfer.api.it.Endpoints.ACCOUNTS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.BANK_ACCOUNT_TRANSACTIONS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.TRANSACTIONS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.TRANSACTION_PATH;
 import static kae.demo.transfer.api.it.Endpoints.USERS_ENDPOINT;
+import static kae.demo.transfer.api.it.TransactionSeeder.createTransaction;
+import static kae.demo.transfer.api.it.UserSeeder.createUser;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -25,7 +28,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   public void testCreateTransaction() {
     final long basicBalance = 100_000_000_000L;
     final long amount = 5_000_000_000L;
-    ITHelper.createTransaction(
+    createTransaction(
         this, "Alisher Usmanov", basicBalance, "Dmitry Medvedev", amount, "This is not a bribe");
 
     http().client(USERS_ENDPOINT).send().get(ACCOUNTS_PATH + "/${accountId}");
@@ -54,7 +57,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testCreateTransactionWithNotEnoughFunds() {
-    ITHelper.createUser(this, "Irish Pub");
+    createUser(this, "Irish Pub");
     action(
         new AbstractTestAction() {
           @Override
@@ -63,7 +66,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
           }
         });
 
-    ITHelper.createAccount(this);
+    createAccount(this);
     action(
         new AbstractTestAction() {
           @Override
@@ -72,8 +75,8 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
           }
         });
 
-    ITHelper.createUser(this, "Anton Kapralov");
-    ITHelper.createAccount(this);
+    createUser(this, "Anton Kapralov");
+    createAccount(this);
 
     http()
         .client(USERS_ENDPOINT)
@@ -109,7 +112,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testGetTransactions() {
-    ITHelper.createTransaction(
+    createTransaction(
         this, "Mark Zuckerberg", 100L, "Pavel Durov", 100L, "Thanks for beer!");
 
     http().client(USERS_ENDPOINT).send().get(TRANSACTIONS_PATH);
@@ -127,7 +130,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   public void testGetTransaction() {
     final long amount = 300L;
     final String comment = "For Catch-22";
-    ITHelper.createTransaction(this, "Kurt Vonnegut", amount, "Joseph Heller", amount, comment);
+    createTransaction(this, "Kurt Vonnegut", amount, "Joseph Heller", amount, comment);
 
     http()
         .client(USERS_ENDPOINT)
@@ -149,7 +152,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testDeleteTransaction() {
-    ITHelper.createTransaction(
+    createTransaction(
         this, "Anonymous", 1000L, "Alexey Navalny", 1000L, "For the great justice!");
 
     http()

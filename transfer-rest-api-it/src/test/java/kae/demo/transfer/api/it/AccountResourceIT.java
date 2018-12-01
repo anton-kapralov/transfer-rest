@@ -1,8 +1,10 @@
 package kae.demo.transfer.api.it;
 
+import static kae.demo.transfer.api.it.AccountSeeder.createAccount;
 import static kae.demo.transfer.api.it.Endpoints.ACCOUNTS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.ACCOUNT_PATH;
 import static kae.demo.transfer.api.it.Endpoints.USERS_ENDPOINT;
+import static kae.demo.transfer.api.it.UserSeeder.createUser;
 import static org.hamcrest.Matchers.greaterThan;
 
 import com.consol.citrus.annotations.CitrusTest;
@@ -17,15 +19,15 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testCreateAccount() {
-    ITHelper.createUser(this, "Philip Kotler");
-    ITHelper.createAccount(this);
+    createUser(this, "Philip Kotler");
+    createAccount(this);
   }
 
   @Test
   @CitrusTest
   public void testGetAccounts() {
-    ITHelper.createUser(this, "Adam Smith");
-    ITHelper.createAccount(this);
+    createUser(this, "Adam Smith");
+    createAccount(this);
 
     http().client(USERS_ENDPOINT).send().get(ACCOUNTS_PATH);
 
@@ -40,8 +42,8 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testGetAccount() {
-    ITHelper.createUser(this, "John Maynard Keynes");
-    ITHelper.createAccount(this);
+    createUser(this, "John Maynard Keynes");
+    createAccount(this);
 
     http().client(USERS_ENDPOINT).send().get(ACCOUNT_PATH);
 
@@ -58,8 +60,8 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testDeleteAccount() {
-    ITHelper.createUser(this, "Karl Marx");
-    ITHelper.createAccount(this);
+    createUser(this, "Karl Marx");
+    createAccount(this);
 
     http().client(USERS_ENDPOINT).send().delete(ACCOUNT_PATH);
 
