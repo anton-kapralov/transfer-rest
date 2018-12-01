@@ -61,4 +61,8 @@ public class AccountEntity {
   private boolean hasEnoughFunds(BigDecimal withdrawalAmount) {
     return getBalance().compareTo(withdrawalAmount) >= 0;
   }
+
+  public boolean idAndUserIdEqualTo(long id, long userId) {
+    return this.id == id && user.getId() == userId;
+  }
 }

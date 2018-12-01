@@ -1,12 +1,11 @@
 package kae.demo.transfer.transaction;
 
+import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-
-import java.math.BigDecimal;
-import java.time.ZonedDateTime;
 
 /** */
 @Data
