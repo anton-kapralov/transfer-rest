@@ -1,5 +1,10 @@
 package kae.demo.transfer.api.it;
 
+import static kae.demo.transfer.api.it.Endpoints.ACCOUNTS_PATH;
+import static kae.demo.transfer.api.it.Endpoints.BANK_ACCOUNT_TRANSACTIONS_PATH;
+import static kae.demo.transfer.api.it.Endpoints.TRANSACTIONS_PATH;
+import static kae.demo.transfer.api.it.Endpoints.TRANSACTION_PATH;
+import static kae.demo.transfer.api.it.Endpoints.USERS_ENDPOINT;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.notNullValue;
 
@@ -23,10 +28,10 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
     ITHelper.createTransaction(
         this, "Alisher Usmanov", basicBalance, "Dmitry Medvedev", amount, "This is not a bribe");
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get(ITHelper.ACCOUNTS_PATH + "/${accountId}");
+    http().client(USERS_ENDPOINT).send().get(ACCOUNTS_PATH + "/${accountId}");
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -34,10 +39,10 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
         .jsonPath("$.userId", "${userId}")
         .jsonPath("$.balance", basicBalance - amount);
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get("/${toUserId}/accounts/${toAccountId}");
+    http().client(USERS_ENDPOINT).send().get("/${toUserId}/accounts/${toAccountId}");
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -71,9 +76,9 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
     ITHelper.createAccount(this);
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .send()
-        .post(ITHelper.BANK_ACCOUNT_TRANSACTIONS_PATH)
+        .post(BANK_ACCOUNT_TRANSACTIONS_PATH)
         .payload(
             Json.createObjectBuilder()
                 .add("toAccountId", "${accountId}")
@@ -83,9 +88,9 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
                 .toString());
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .send()
-        .post(ITHelper.TRANSACTIONS_PATH)
+        .post(TRANSACTIONS_PATH)
         .payload(
             Json.createObjectBuilder()
                 .add("toAccountId", "${toAccountId}")
@@ -95,7 +100,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
                 .toString());
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.BAD_REQUEST)
         .jsonPath("$.message", "Not enough funds");
@@ -107,10 +112,10 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
     ITHelper.createTransaction(
         this, "Mark Zuckerberg", 100L, "Pavel Durov", 100L, "Thanks for beer!");
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get(ITHelper.TRANSACTIONS_PATH);
+    http().client(USERS_ENDPOINT).send().get(TRANSACTIONS_PATH);
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -125,12 +130,12 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
     ITHelper.createTransaction(this, "Kurt Vonnegut", amount, "Joseph Heller", amount, comment);
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .send()
-        .get(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
+        .get(TRANSACTION_PATH);
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -148,19 +153,19 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
         this, "Anonymous", 1000L, "Alexey Navalny", 1000L, "For the great justice!");
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .send()
-        .delete(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
+        .delete(TRANSACTION_PATH);
 
-    http().client(ITHelper.USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .send()
-        .get(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
+        .get(TRANSACTION_PATH);
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.NOT_FOUND)
         .messageType(MessageType.JSON);

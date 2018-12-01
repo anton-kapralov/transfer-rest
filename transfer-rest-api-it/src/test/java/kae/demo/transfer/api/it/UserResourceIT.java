@@ -1,5 +1,6 @@
 package kae.demo.transfer.api.it;
 
+import static kae.demo.transfer.api.it.Endpoints.USERS_ENDPOINT;
 import static org.hamcrest.Matchers.greaterThan;
 
 import com.consol.citrus.annotations.CitrusTest;
@@ -23,10 +24,10 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   public void testGetUsers() throws Exception {
     ITHelper.createUser(this, "Lev Tolstoy");
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get();
+    http().client(USERS_ENDPOINT).send().get();
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -38,10 +39,10 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   public void testGetUser() throws Exception {
     ITHelper.createUser(this, "Fedor Dostoevsky");
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get("/${userId}");
+    http().client(USERS_ENDPOINT).send().get("/${userId}");
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -56,17 +57,17 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
 
     final String newName = "Lana Wachowski";
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .send()
         .put("/${userId}")
         .payload(Json.createObjectBuilder().add("name", newName).build().toString());
 
-    http().client(ITHelper.USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get("/${userId}");
+    http().client(USERS_ENDPOINT).send().get("/${userId}");
 
     http()
-        .client(ITHelper.USERS_ENDPOINT)
+        .client(USERS_ENDPOINT)
         .receive()
         .response(HttpStatus.OK)
         .messageType(MessageType.JSON)
@@ -79,20 +80,20 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
   public void testDeleteUser() throws Exception {
     ITHelper.createUser(this, "Anton Kapralov");
 
-    http().client(ITHelper.USERS_ENDPOINT).send().delete("/${userId}");
+    http().client(USERS_ENDPOINT).send().delete("/${userId}");
 
-    http().client(ITHelper.USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get("/${userId}");
+    http().client(USERS_ENDPOINT).send().get("/${userId}");
 
-    http().client(ITHelper.USERS_ENDPOINT).receive().response(HttpStatus.NOT_FOUND);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NOT_FOUND);
   }
 
   @Test
   @CitrusTest
   public void testDeleteUnknownUser() throws Exception {
-    http().client(ITHelper.USERS_ENDPOINT).send().delete("/" + Integer.MAX_VALUE);
+    http().client(USERS_ENDPOINT).send().delete("/" + Integer.MAX_VALUE);
 
-    http().client(ITHelper.USERS_ENDPOINT).receive().response(HttpStatus.NOT_FOUND);
+    http().client(USERS_ENDPOINT).receive().response(HttpStatus.NOT_FOUND);
   }
 }

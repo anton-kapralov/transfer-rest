@@ -1,5 +1,9 @@
 package kae.demo.transfer.api.it;
 
+import static kae.demo.transfer.api.it.Endpoints.ACCOUNTS_PATH;
+import static kae.demo.transfer.api.it.Endpoints.BANK_ACCOUNT_TRANSACTIONS_PATH;
+import static kae.demo.transfer.api.it.Endpoints.TRANSACTIONS_PATH;
+import static kae.demo.transfer.api.it.Endpoints.USERS_ENDPOINT;
 import static org.junit.Assert.assertNotNull;
 
 import com.consol.citrus.actions.AbstractTestAction;
@@ -10,10 +14,6 @@ import org.springframework.http.HttpStatus;
 
 /** */
 class ITHelper {
-  static final String USERS_ENDPOINT = "users";
-  static final String ACCOUNTS_PATH = "/${userId}/accounts";
-  static final String TRANSACTIONS_PATH = ACCOUNTS_PATH + "/${accountId}/transactions";
-  static final String BANK_ACCOUNT_TRANSACTIONS_PATH = "/1/accounts/1/transactions";
 
   static void createUser(JUnit4CitrusTestDesigner testDesigner, String name) {
     testDesigner

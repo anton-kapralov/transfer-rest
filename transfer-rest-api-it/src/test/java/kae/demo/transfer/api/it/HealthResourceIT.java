@@ -1,5 +1,7 @@
 package kae.demo.transfer.api.it;
 
+import static kae.demo.transfer.api.it.Endpoints.HEALTH_ENDPOINT;
+
 import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.dsl.junit.JUnit4CitrusTestDesigner;
 import com.consol.citrus.message.MessageType;
@@ -8,8 +10,6 @@ import org.springframework.http.HttpStatus;
 
 /** */
 public class HealthResourceIT extends JUnit4CitrusTestDesigner {
-
-  private static final String HEALTH_ENDPOINT = "health";
 
   @Test
   @CitrusTest
