@@ -3,10 +3,7 @@ package kae.demo.transfer.api.it;
 import static kae.demo.transfer.api.it.Endpoints.BANK_ACCOUNT_TRANSACTIONS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.TRANSACTIONS_PATH;
 import static kae.demo.transfer.api.it.Endpoints.USERS_ENDPOINT;
-import static kae.demo.transfer.api.it.IdExtractor.extractIdFromLocation;
 
-import com.consol.citrus.actions.AbstractTestAction;
-import com.consol.citrus.context.TestContext;
 import com.consol.citrus.dsl.junit.JUnit4CitrusTestDesigner;
 import javax.json.Json;
 import org.springframework.http.HttpStatus;
@@ -24,22 +21,10 @@ class TransactionSeeder {
       long amount,
       String comment) {
     UserSeeder.createUser(testDesigner, to);
-    testDesigner.action(
-        new AbstractTestAction() {
-          @Override
-          public void doExecute(TestContext testContext) {
-            testContext.setVariable("toUserId", testContext.getVariable("userId"));
-          }
-        });
+    testDesigner.action(new AssignVariable("toUserId", "userId"));
 
     AccountSeeder.createAccount(testDesigner);
-    testDesigner.action(
-        new AbstractTestAction() {
-          @Override
-          public void doExecute(TestContext testContext) {
-            testContext.setVariable("toAccountId", testContext.getVariable("accountId"));
-          }
-        });
+    testDesigner.action(new AssignVariable("toAccountId", "accountId"));
 
     UserSeeder.createUser(testDesigner, from);
     AccountSeeder.createAccount(testDesigner);
@@ -77,12 +62,6 @@ class TransactionSeeder {
         .response(HttpStatus.CREATED)
         .extractFromHeader("Location", "${location}");
 
-    testDesigner.action(
-        new AbstractTestAction() {
-          @Override
-          public void doExecute(TestContext testContext) {
-            testContext.setVariable("transactionId", extractIdFromLocation(testContext));
-          }
-        });
+    testDesigner.action(new SaveIdFromLocationTo("transactionId"));
   }
 }
