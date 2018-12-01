@@ -1,13 +1,12 @@
 package kae.demo.transfer.api.it;
 
+import static org.junit.Assert.assertNotNull;
+
 import com.consol.citrus.actions.AbstractTestAction;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.dsl.junit.JUnit4CitrusTestDesigner;
-import org.springframework.http.HttpStatus;
-
 import javax.json.Json;
-
-import static org.junit.Assert.assertNotNull;
+import org.springframework.http.HttpStatus;
 
 /** */
 class ITHelper {

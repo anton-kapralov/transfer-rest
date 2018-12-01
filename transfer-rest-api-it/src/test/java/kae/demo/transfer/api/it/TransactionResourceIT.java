@@ -1,17 +1,16 @@
 package kae.demo.transfer.api.it;
 
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.notNullValue;
+
 import com.consol.citrus.actions.AbstractTestAction;
 import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.context.TestContext;
 import com.consol.citrus.dsl.junit.JUnit4CitrusTestDesigner;
 import com.consol.citrus.message.MessageType;
+import javax.json.Json;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-
-import javax.json.Json;
-
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.notNullValue;
 
 /** */
 public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
@@ -105,8 +104,8 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testGetTransactions() throws Exception {
-    ITHelper
-        .createTransaction(this, "Mark Zuckerberg", 100L, "Pavel Durov", 100L, "Thanks for beer!");
+    ITHelper.createTransaction(
+        this, "Mark Zuckerberg", 100L, "Pavel Durov", 100L, "Thanks for beer!");
 
     http().client(ITHelper.USERS_ENDPOINT).send().get(ITHelper.TRANSACTIONS_PATH);
 
@@ -125,7 +124,10 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
     final String comment = "For Catch-22";
     ITHelper.createTransaction(this, "Kurt Vonnegut", amount, "Joseph Heller", amount, comment);
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
+    http()
+        .client(ITHelper.USERS_ENDPOINT)
+        .send()
+        .get(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
 
     http()
         .client(ITHelper.USERS_ENDPOINT)
@@ -142,13 +144,20 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
   @Test
   @CitrusTest
   public void testDeleteTransaction() throws Exception {
-    ITHelper.createTransaction(this, "Anonymous", 1000L, "Alexey Navalny", 1000L, "For the great justice!");
+    ITHelper.createTransaction(
+        this, "Anonymous", 1000L, "Alexey Navalny", 1000L, "For the great justice!");
 
-    http().client(ITHelper.USERS_ENDPOINT).send().delete(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
+    http()
+        .client(ITHelper.USERS_ENDPOINT)
+        .send()
+        .delete(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
 
     http().client(ITHelper.USERS_ENDPOINT).receive().response(HttpStatus.NO_CONTENT);
 
-    http().client(ITHelper.USERS_ENDPOINT).send().get(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
+    http()
+        .client(ITHelper.USERS_ENDPOINT)
+        .send()
+        .get(ITHelper.TRANSACTIONS_PATH + "/${transactionId}");
 
     http()
         .client(ITHelper.USERS_ENDPOINT)

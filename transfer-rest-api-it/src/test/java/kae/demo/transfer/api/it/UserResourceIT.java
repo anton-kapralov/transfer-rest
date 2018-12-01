@@ -1,14 +1,13 @@
 package kae.demo.transfer.api.it;
 
+import static org.hamcrest.Matchers.greaterThan;
+
 import com.consol.citrus.annotations.CitrusTest;
 import com.consol.citrus.dsl.junit.JUnit4CitrusTestDesigner;
 import com.consol.citrus.message.MessageType;
+import javax.json.Json;
 import org.junit.Test;
 import org.springframework.http.HttpStatus;
-
-import javax.json.Json;
-
-import static org.hamcrest.Matchers.greaterThan;
 
 /** */
 public class UserResourceIT extends JUnit4CitrusTestDesigner {
