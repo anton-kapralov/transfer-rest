@@ -15,13 +15,13 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testCreateUser() throws Exception {
+  public void testCreateUser() {
     ITHelper.createUser(this, "Viktor Pelevin");
   }
 
   @Test
   @CitrusTest
-  public void testGetUsers() throws Exception {
+  public void testGetUsers() {
     ITHelper.createUser(this, "Lev Tolstoy");
 
     http().client(USERS_ENDPOINT).send().get();
@@ -36,7 +36,7 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testGetUser() throws Exception {
+  public void testGetUser() {
     ITHelper.createUser(this, "Fedor Dostoevsky");
 
     http().client(USERS_ENDPOINT).send().get("/${userId}");
@@ -52,7 +52,7 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testUpdateUser() throws Exception {
+  public void testUpdateUser() {
     ITHelper.createUser(this, "Laurence Wachowski");
 
     final String newName = "Lana Wachowski";
@@ -77,7 +77,7 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testDeleteUser() throws Exception {
+  public void testDeleteUser() {
     ITHelper.createUser(this, "Anton Kapralov");
 
     http().client(USERS_ENDPOINT).send().delete("/${userId}");
@@ -91,7 +91,7 @@ public class UserResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testDeleteUnknownUser() throws Exception {
+  public void testDeleteUnknownUser() {
     http().client(USERS_ENDPOINT).send().delete("/" + Integer.MAX_VALUE);
 
     http().client(USERS_ENDPOINT).receive().response(HttpStatus.NOT_FOUND);

@@ -22,7 +22,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testCreateTransaction() throws Exception {
+  public void testCreateTransaction() {
     final long basicBalance = 100_000_000_000L;
     final long amount = 5_000_000_000L;
     ITHelper.createTransaction(
@@ -53,7 +53,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testCreateTransactionWithNotEnoughFunds() throws Exception {
+  public void testCreateTransactionWithNotEnoughFunds() {
     ITHelper.createUser(this, "Irish Pub");
     action(
         new AbstractTestAction() {
@@ -108,7 +108,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testGetTransactions() throws Exception {
+  public void testGetTransactions() {
     ITHelper.createTransaction(
         this, "Mark Zuckerberg", 100L, "Pavel Durov", 100L, "Thanks for beer!");
 
@@ -124,7 +124,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testGetTransaction() throws Exception {
+  public void testGetTransaction() {
     final long amount = 300L;
     final String comment = "For Catch-22";
     ITHelper.createTransaction(this, "Kurt Vonnegut", amount, "Joseph Heller", amount, comment);
@@ -148,7 +148,7 @@ public class TransactionResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testDeleteTransaction() throws Exception {
+  public void testDeleteTransaction() {
     ITHelper.createTransaction(
         this, "Anonymous", 1000L, "Alexey Navalny", 1000L, "For the great justice!");
 

@@ -16,14 +16,14 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testCreateAccount() throws Exception {
+  public void testCreateAccount() {
     ITHelper.createUser(this, "Philip Kotler");
     ITHelper.createAccount(this);
   }
 
   @Test
   @CitrusTest
-  public void testGetAccounts() throws Exception {
+  public void testGetAccounts() {
     ITHelper.createUser(this, "Adam Smith");
     ITHelper.createAccount(this);
 
@@ -39,7 +39,7 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testGetAccount() throws Exception {
+  public void testGetAccount() {
     ITHelper.createUser(this, "John Maynard Keynes");
     ITHelper.createAccount(this);
 
@@ -57,7 +57,7 @@ public class AccountResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testDeleteAccount() throws Exception {
+  public void testDeleteAccount() {
     ITHelper.createUser(this, "Karl Marx");
     ITHelper.createAccount(this);
 

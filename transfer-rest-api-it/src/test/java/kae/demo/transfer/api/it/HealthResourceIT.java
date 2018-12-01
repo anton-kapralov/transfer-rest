@@ -13,7 +13,7 @@ public class HealthResourceIT extends JUnit4CitrusTestDesigner {
 
   @Test
   @CitrusTest
-  public void testGetHealth() throws Exception {
+  public void testGetHealth() {
     http().client(HEALTH_ENDPOINT).send().get();
 
     http()
