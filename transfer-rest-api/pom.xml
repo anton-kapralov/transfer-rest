@@ -13,7 +13,7 @@
   <name>transfer-rest-api</name>
 
   <properties>
-    <tomcat.version>7.0.94</tomcat.version>
+    <tomcat.version>7.0.100</tomcat.version>
   </properties>
 
   <build>
