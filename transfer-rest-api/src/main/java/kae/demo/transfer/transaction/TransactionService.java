@@ -25,6 +25,8 @@ public class TransactionService {
   }
 
   public long create(long userId, long accountId, Transaction transaction) {
+    // TODO: Add retry in case of OptimisticLockException.
+
     TransactionEntity transactionEntity =
         executeAndReturnWithTransaction(
             em -> {
